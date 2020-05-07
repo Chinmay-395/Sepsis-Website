@@ -1,0 +1,6 @@
+__pycache__
+*.swp
+*.sqlite
+Dataset/
+architectui-react-free-1.0.0/
+sepsisEnv/
