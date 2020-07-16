@@ -3,15 +3,14 @@ import { Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Home from './HomeComponent'
 import AuthenticationComponent from './AuthenticationComponent'
-
+import Header from './HeaderComponent'
 
 class Main extends Component {
     componentDidMount() {
         console.log("componentDidMount ran inside Main ")
 
-        if (this.props.auth.token == null || this.props == undefined) {
+        if (this.props.auth.token == null) {
             console.log("You lost your props JACK")
-            // alert("You lost your props JACK")         
 
         } else {
             console.log(">>>>", this.props)
@@ -19,23 +18,19 @@ class Main extends Component {
     }
 
     render() {
-        if (this.props.auth.token == null || this.props == undefined) {
-            return (
-                <Route path='/login' component={() => <AuthenticationComponent />} />
-            )
 
-        } else {
-            return (
-                <div>
-                    {/* Header component */}
-                    <Switch>
-                        <Route path='/home' component={() => <Home />} />
-                        <Redirect to='/home' />
-                    </Switch>
-                    {/* Footer component */}
-                </div>
-            )
-        }
+        return (
+            <div>
+                <Header />
+                <Switch>
+                    <Route path='/home' component={() => <Home />} />
+                    <Route path='/login' component={() => <AuthenticationComponent />} />
+                    <Redirect to='/home' />
+                </Switch>
+                {/* Footer component */}
+            </div>
+        )
+
 
     }
 }
@@ -44,7 +39,7 @@ const mapStateToProps = (state) => {
         auth: state.auth
     }
 }
-// const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
 
-// })
-export default withRouter(connect(mapStateToProps)(Main))
+})
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main))

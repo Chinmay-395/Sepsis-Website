@@ -11,7 +11,9 @@ import {
 
 class AuthenticationComponent extends Component {
 
-
+  componentDidMount() {
+    console.log("HEHI")
+  }
   handleFormSubmit = () => {
     // preventDefault();
     console.log("EMail & password", this.email.value, this.password.value)
@@ -20,7 +22,7 @@ class AuthenticationComponent extends Component {
 
 
   render() {
-    if (localStorage.getItem('token') !== null) {
+    if (this.props.auth.token !== null) {
       return (
         <Redirect to="/" />
       )
