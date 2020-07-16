@@ -64,6 +64,11 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# ACCOUNT_USERNAME_REQUIRED = True
+# Create a url so that after login the can go to a particular page
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+LOGIN_REDIRECT_URL = '/'
 # _________________________________________________________________________________________
 
 MIDDLEWARE = [

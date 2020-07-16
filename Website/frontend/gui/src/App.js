@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
+//React & Redux imports
+import React, { Component } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+
+//Ant-Design imports
+import 'antd/dist/antd.css';
+//Custom imports
 import './App.css';
+import Main from './components/MainComponent';
+import { configureStore } from './redux/configureStore'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const store = configureStore();
+
+class App extends Component {
+
+  render() {
+    return (
+      <Provider store={store}>
+        <BrowserRouter>
+          <div className="App">
+            <Main />
+          </div>
+        </BrowserRouter>
+      </Provider>
+    );
+  }
 }
-
 export default App;
