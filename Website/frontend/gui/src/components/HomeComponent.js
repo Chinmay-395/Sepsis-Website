@@ -4,6 +4,7 @@ import { Redirect, Link } from 'react-router-dom'
 class Home extends Component {
     componentWillMount() {
         console.log("ALOHA from Home")
+        console.log("PROPS>>>", this.prop)
     }
     handleClick = () => {
         console.log("VOILA")

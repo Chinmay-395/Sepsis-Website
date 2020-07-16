@@ -1,13 +1,77 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import { Redirect, Route } from "react-router-dom";
+import { authLogin, logout, } from '../redux/ActionCreator'
+import {
+  Container, Col, Form,
+  FormGroup, Label, Input,
+  Button,
+} from 'reactstrap';
 
-export class AuthenticationComponent extends Component {
-    render() {
-        return (
-            <div>
-                <h3>We are authentications myFriends</h3>
-            </div>
-        )
+
+class AuthenticationComponent extends Component {
+
+
+  handleFormSubmit = () => {
+    // preventDefault();
+    console.log("EMail & password", this.email.value, this.password.value)
+    this.props.authLogin(this.email.value, this.password.value)
+  }
+
+
+  render() {
+    if (localStorage.getItem('token') !== null) {
+      return (
+        <Redirect to="/" />
+      )
+    } else {
+      return (
+        <Container>
+          <h2>Sign In</h2>
+          <Form className="form">
+            <Col>
+              <FormGroup>
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  name="email"
+                  id="exampleEmail"
+                  placeholder="myemail@email.com"
+                  innerRef={(input) => this.email = input}
+                />
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="examplePassword">Password</Label>
+                <Input
+                  type="password"
+                  name="password"
+                  id="examplePassword"
+                  placeholder="********"
+                  innerRef={(input) => this.password = input}
+                />
+              </FormGroup>
+            </Col>
+            <Button onClick={() => this.handleFormSubmit()}>Submit</Button>
+          </Form>
+        </Container>
+      )
     }
+
+  }
 }
 
-export default AuthenticationComponent
+const mapStateToProps = state => {
+  return {
+    auth: state.auth,
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  authLogin: (username, password) => {
+    dispatch(authLogin(username, password))
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthenticationComponent)
