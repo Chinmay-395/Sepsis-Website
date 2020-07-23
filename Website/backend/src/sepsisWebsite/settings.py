@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # custom apps
     'profiles_api',
+    'sepsisAPI',
 ]
 # ------------------------------- REST-FRAMEWORK --------------------------------------- #
 REST_FRAMEWORK = {
