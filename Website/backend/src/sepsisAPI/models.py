@@ -5,7 +5,7 @@ from profiles_api.models import UserProfile
 
 
 class Doctor(models.Model):
-    doc = models.OneToOneField(
+    doc = models.ForeignKey(
         UserProfile, null=True, blank=True, on_delete=models.CASCADE)
     phd = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(null=True, blank=True)
@@ -15,7 +15,7 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
-    pat = models.OneToOneField(
+    pat = models.ForeignKey(
         UserProfile, null=True, blank=True, on_delete=models.CASCADE)
     age = models.PositiveIntegerField(blank=True, null=True)
     GENDER_TYPE_CHOICES = (
@@ -30,6 +30,9 @@ class Patient(models.Model):
 
     def __str__(self):
         return f'{self.pat.name}'
+
+    # def get_name_of_pat(self):
+    #     for name in
 
 
 class SepsisOfPatient(models.Model):
@@ -87,6 +90,7 @@ def create_patient_schemas(sender, instance, created, **kwargs):
                 print("The patient is", instance)
                 print("patient-ID ", instance.id)
                 instance.doctor = doc
+                SepsisOfPatient.objects.create(patient=instance)
                 instance.save()
                 print("The doctor assigned to you is", doc)
                 flag = 0

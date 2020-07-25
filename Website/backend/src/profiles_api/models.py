@@ -50,4 +50,4 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         return self.user_type
 
     def __str__(self):
-        return f'{self.email} as {self.user_type}'
+        return f'{self.name}'  # {self.email} as {self.user_type}
