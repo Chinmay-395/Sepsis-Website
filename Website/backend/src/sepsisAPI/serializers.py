@@ -17,18 +17,23 @@ class PatientSerializer(ModelSerializer):
         # depth = 2
 
     def get_pat(self, obj):
-        print("patient->>>>>>>>>>>>", str(obj.pat))
+        """ gives that patient whose object is running 
+            for example:-
+            patient_id = 1 <------> patient_name = Naruto Uzumaki
+            patient_id = 2 <------> patient_name = Sasuke Uchiha
+        """
+        # print("patient->>>>>>>>>>>>", str(obj.pat))
         return str(obj.pat)
 
     def get_doctor(self, obj):
-        print("doctor->>>>>>>>>>>>", str(obj.doctor))
+        # print("doctor->>>>>>>>>>>>", str(obj.doctor))
         return str(obj.doctor)
 
     def get_sep_data(self, obj):
-        print("sepsis->>>>>>>>>>>>", str(obj.sepsisofpatient_set.all()))
-        list_sepsis_data = obj.sepsisofpatient_set.values('id', 'heart_rate', 'oxy_saturation', 'temperature',
+        # print("sepsis->>>>>>>>>>>>", str(obj.sepsisofpatient_set.all()))
+        list_sepsis_data = obj.sepsisofpatient_set.values('heart_rate', 'oxy_saturation', 'temperature',
                                                           'blood_pressure', 'resp_rate', 'mean_art_pre')
-        print("LIST THE SEPSIS DATA", list_sepsis_data)
+        # print("LIST THE SEPSIS DATA", list_sepsis_data)
         return list_sepsis_data  # str(obj.sepsisofpatient_set.all())
 
 
@@ -53,12 +58,19 @@ class DoctorSerializer(ModelSerializer):
             """
 
             x = patient
-            y = patient.pat.name
-            print(patient)
-            print("====================", type(x))
-            print("====================", type(y))
-            print("NAME IS>>>>>>>>>>>>>", y)
-            pat_list.append(y)  # pat_list += [y]
+            ''' getting the value sepsis data
+                for each patient
+                sepValue = x.sepsisofpatient_set.all()
+            '''
+
+            print(sepValue)
+            patient_iside_obj_name = patient.pat.name
+            # print(patient)
+            # print("====================", type(x))
+            # print("====================", type(patient_iside_obj_name))
+            # print("NAME IS>>>>>>>>>>>>>", patient_iside_obj_name)
+            # pat_list += [patient_iside_obj_name]
+            pat_list.append(patient_iside_obj_name)
 
         print(pat_list)
         return pat_list  # str(obj)
