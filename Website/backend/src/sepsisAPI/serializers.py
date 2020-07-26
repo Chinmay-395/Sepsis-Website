@@ -8,10 +8,12 @@ from profiles_api.models import UserProfile
 class PatientSerializer(ModelSerializer):
     pat = SerializerMethodField()
     doctor = SerializerMethodField()
+    # SerializerMethodField()
+    sep_data = SerializerMethodField()  # CharField(read_only=True, source="patient")
 
     class Meta:
         model = Patient
-        fields = ['id', 'pat', 'doctor']
+        fields = ['id', 'pat', 'doctor', 'sep_data']
         # depth = 2
 
     def get_pat(self, obj):
@@ -21,6 +23,13 @@ class PatientSerializer(ModelSerializer):
     def get_doctor(self, obj):
         print("doctor->>>>>>>>>>>>", str(obj.doctor))
         return str(obj.doctor)
+
+    def get_sep_data(self, obj):
+        print("sepsis->>>>>>>>>>>>", str(obj.sepsisofpatient_set.all()))
+        list_sepsis_data = obj.sepsisofpatient_set.values('id', 'heart_rate', 'oxy_saturation', 'temperature',
+                                                          'blood_pressure', 'resp_rate', 'mean_art_pre')
+        print("LIST THE SEPSIS DATA", list_sepsis_data)
+        return list_sepsis_data  # str(obj.sepsisofpatient_set.all())
 
 
 class DoctorSerializer(ModelSerializer):
@@ -42,6 +51,7 @@ class DoctorSerializer(ModelSerializer):
             """ <patient> is an object of the doctor whose
                 object has been send into the function
             """
+
             x = patient
             y = patient.pat.name
             print(patient)
@@ -52,3 +62,10 @@ class DoctorSerializer(ModelSerializer):
 
         print(pat_list)
         return pat_list  # str(obj)
+
+
+class SepsisPatientSerializer(ModelSerializer):
+    class Meta:
+        model = SepsisOfPatient
+        fields = ["id", "heart_rate", "oxy_saturation", "temperature",
+                  "blood_pressure", "resp_rate", "mean_art_pre", "patient"]  # "__all__"
