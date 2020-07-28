@@ -38,13 +38,15 @@ INSTALLED_APPS = [
     'corsheaders',
     # custom apps
     'profiles_api',
+    'sepsisAPI',
 ]
 # ------------------------------- REST-FRAMEWORK --------------------------------------- #
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
+        # IsAuthenticatedOrReadOnly || IsAuthenticated
+        'rest_framework.permissions.IsAuthenticated'
     ]
 }
 # _________________________________________________________________________________________

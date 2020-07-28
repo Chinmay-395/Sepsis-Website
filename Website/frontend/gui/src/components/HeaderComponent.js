@@ -12,10 +12,10 @@ import {
 import { connect } from 'react-redux'
 
 const links = [
-  { href: '/home', text: 'Home' },
-  { href: '#card', text: 'Profile' },
-  { href: '#about', text: 'Monitoring' },
-  { href: '/login', text: 'LOGIN' },
+  { key: '1', href: '/home', text: 'Home' },
+  { key: '2', href: '#card', text: 'Profile' },
+  { key: '3', href: '#about', text: 'Monitoring' },
+  { key: '4', href: '/login', text: 'LOGIN' },
 ];
 
 
@@ -36,28 +36,33 @@ class Header extends Component {
       isOpen: !this.state.isOpen
     });
   }
-  createNavItem = ({ href, text, className }) => {
+  createNavItem = ({ href, text, className, key }) => {
     if (this.props.auth.token !== null) {
       console.log("the email", localStorage.getItem('email'))
       console.log("The text", text)
       if (text === 'LOGIN') {
         return (
-          <NavItem>
-            <NavLink href="#">{localStorage.getItem('email')}</NavLink>
-          </NavItem>
+          <>
+            <NavItem key={key}>
+              <NavLink href="#">{localStorage.getItem('email')}</NavLink>
+            </NavItem>
+            {/* <NavItem key={key + 1}>
+              <NavLink href="#">Logout</NavLink>
+            </NavItem> */}
+          </>
         )
 
       }
       else {
         return (
-          <NavItem>
+          <NavItem key={key}>
             <NavLink href={href} className={className}>{text}</NavLink>
           </NavItem>
         )
       }
     } else {
       return (
-        <NavItem>
+        <NavItem key={key}>
           <NavLink href={href} className={className}>{text}</NavLink>
         </NavItem>
       )

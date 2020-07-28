@@ -11,7 +11,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ padding: "15px" }}>
         <Container fluid>
           <Row>
             <div className="col-md-12 col-lg-6">
