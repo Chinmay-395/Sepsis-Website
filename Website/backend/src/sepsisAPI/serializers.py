@@ -8,7 +8,6 @@ from profiles_api.models import UserProfile
 class PatientSerializer(ModelSerializer):
     pat = SerializerMethodField()
     doctor = SerializerMethodField()
-    # SerializerMethodField()
     sep_data = SerializerMethodField()  # CharField(read_only=True, source="patient")
 
     class Meta:
@@ -61,9 +60,9 @@ class DoctorSerializer(ModelSerializer):
             ''' getting the value sepsis data
                 for each patient
                 sepValue = x.sepsisofpatient_set.all()
+                print(sepValue)
             '''
 
-            print(sepValue)
             patient_iside_obj_name = patient.pat.name
             # print(patient)
             # print("====================", type(x))
