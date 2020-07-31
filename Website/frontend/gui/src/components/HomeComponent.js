@@ -5,12 +5,14 @@ import { connect } from 'react-redux'
 
 import Graphvisulation from './pat_Components/GraphComponent'
 import HomePage from './doc_Components/HomePage'
+import { fetchDocData } from '../redux/ActionCreator'
 
 
 class Home extends Component {
   componentWillMount() {
     console.log("ALOHA from Home")
     console.log("PROPS>>>", this.props)
+    this.props.fetchDocData();
   }
   componentDidUpdate() {
     console.log("***************WE ARE*********")
@@ -47,6 +49,6 @@ const mapStateToProps = (state) => {
   }
 }
 const mapDispatchToProps = dispatch => ({
-
+  fetchDocData: () => dispatch(fetchDocData())
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
