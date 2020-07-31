@@ -96,3 +96,4 @@ export const authCheckState = () => {
     }
 }
 
+//docAction will be the ActionCreators for docData

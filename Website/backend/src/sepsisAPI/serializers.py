@@ -25,7 +25,7 @@ class PatientSerializer(ModelSerializer):
         return str(obj.pat)
 
     def get_doctor(self, obj):
-        # print("doctor->>>>>>>>>>>>", str(obj.doctor))
+        print("doctor->>>>>>>>>>>>", str(obj.doctor))
         return str(obj.doctor)
 
     def get_sep_data(self, obj):
@@ -39,12 +39,18 @@ class PatientSerializer(ModelSerializer):
 class DoctorSerializer(ModelSerializer):
     doc_name = CharField(read_only=True, source="doc.name")
     patient_set_name = SerializerMethodField()
+    doctor = SerializerMethodField()
 
     class Meta:
         model = Doctor
 
         fields = ['id', 'doc_name',
-                  'patient_set', 'patient_set_name']
+                  'patient_set', 'patient_set_name', 'doctor']
+
+    def get_doctor(self, obj):
+        print("doctor's id ->>>>>>>>>>>>", str(obj.id))
+        print("doctor ->>>>>>>>>>>>", str(obj))
+        return obj.id
 
     def get_patient_set_name(self, obj):
         ''' <obj> refers to the object of Doctor-Model '''
