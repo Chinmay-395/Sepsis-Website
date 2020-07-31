@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 // import { Redirect, Link } from 'react-router-dom'
 // import { Link, withRouter } from 'react-router'
-
 import { connect } from 'react-redux'
-import Graphvisulation from './GraphComponent'
+
+import Graphvisulation from './pat_Components/GraphComponent'
+import HomePage from './doc_Components/HomePage'
+
 
 class Home extends Component {
   componentWillMount() {
@@ -19,7 +21,7 @@ class Home extends Component {
     if (localStorage.getItem('user_type') === 'DOCTOR') {
       return (
         <div>
-          <h1>Hello Doctor</h1>
+          <HomePage />
         </div>
       )
     }
