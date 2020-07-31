@@ -10,6 +10,9 @@ class Doctor(models.Model):
     phd = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(null=True, blank=True)
 
+    def doc_id(self):
+        return f'{self.id}'
+
     def __str__(self):
         return f'{self.doc.name}'
 

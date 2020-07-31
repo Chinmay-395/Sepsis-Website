@@ -1,8 +1,14 @@
 from rest_framework import serializers
 from profiles_api import models
+from rest_framework.serializers import (
+    ModelSerializer, HyperlinkedIdentityField, RelatedField, SlugRelatedField,
+    StringRelatedField, PrimaryKeyRelatedField, CharField, SerializerMethodField)
+# from sepsisAPI.models import Doctor, Patient, SepsisOfPatient
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    idOfTheUser = SerializerMethodField()
+
     class Meta:
         model = models.UserProfile
         fields = ('id', 'name', 'email', 'password', 'user_type')
@@ -15,6 +21,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             #     'default': "PATIENT"
             # }
         }
+
+    def get_idOfTheUser(self, obj):
+        print("BOX-----------", obj)
 
     def create(self, validate_data):
         print("Validated data-----", validate_data)

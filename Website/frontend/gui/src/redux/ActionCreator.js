@@ -54,6 +54,7 @@ export const authLogin = (username, password) => (dispatch) => {
         localStorage.setItem('email', email);
         localStorage.setItem('token', token);
         localStorage.setItem('user_type', user_type)
+        localStorage.setItem('user_type_id', response.data.user_type_id)
         // console.log("THE DATA AFTER LOGGING........", response.data)
         dispatch(authSuccess(token));
         dispatch(checkAuthTimeout(3600));
@@ -96,3 +97,18 @@ export const authCheckState = () => {
     }
 }
 
+//docAction will be the ActionCreators for docData
+export const fetchDocData = () => (dispatch) => {
+    const id = localStorage.getItem('user_type_id') // Doctor-Model-id
+    let fetchDocData = async () => {
+        await axios.get(`http://127.0.0.1:8000/sepsisAPI/docsdoc/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        }).then(response => { console.log("THE data+++++++++++++++++++++", response.data) })
+            .catch(error => console.log("THE ERROR+++++++++++++++", error))
+    }
+    fetchDocData()
+
+}

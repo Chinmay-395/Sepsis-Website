@@ -10,7 +10,7 @@ import {
   // NavbarText,
 } from 'reactstrap';
 import { connect } from 'react-redux'
-
+import { logout } from '../redux/ActionCreator'
 const links = [
   { key: '1', href: '/home', text: 'Home' },
   { key: '2', href: '#card', text: 'Profile' },
@@ -30,6 +30,9 @@ class Header extends Component {
 
     this.toggle = this.toggle.bind(this);
   }
+  logoutbutton = () => {
+    this.props.logout()
+  }
 
   toggle() {
     this.setState({
@@ -46,6 +49,7 @@ class Header extends Component {
             <NavItem key={key}>
               <NavLink href="#">{localStorage.getItem('email')}</NavLink>
             </NavItem>
+            <button onClick={() => this.logoutbutton()}>Logout</button>
             {/* <NavItem key={key + 1}>
               <NavLink href="#">Logout</NavLink>
             </NavItem> */}
@@ -93,6 +97,6 @@ const mapStateToProps = (state) => {
   }
 }
 const mapDispatchToProps = dispatch => ({
-
+  logout: () => { dispatch(logout()) }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Header)

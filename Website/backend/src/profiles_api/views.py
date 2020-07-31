@@ -33,11 +33,34 @@ class UserLoginApiView(ObtainAuthToken):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+
+        print("THE USER from userLoginApiView>>>>>>>>>", user)
+        print("THE USER-ID from userLoginApiView>>>>>>>>>", user.id)
+        """ if the user is a doctor then I will send doc-id
+            and if the user is a patient then i will send pat-id
+            as user_type_id 
+        """
+        if user.user_type == 'DOCTOR':
+            x = models.UserProfile.objects.get(id=user.id)
+            userprofile_id = x.id
+            y = x.doctor_set.values('id')
+            user_type_id = y[0]['id']
+            print("THE USER-ID of DOC", userprofile_id)
+            print("USER's doc-id", user_type_id)
+
+        elif user.user_type == 'PATIENT':
+            x = models.UserProfile.objects.get(id=user.id)
+            userprofile_id = x.id
+            y = x.patient_set.values('id')
+            user_type_id = y[0]['id']
+            print("THE USER-ID of PATIENT", userprofile_id)
+            print("USER's pat-id", user_type_id)
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
             'user_id': user.pk,
             'email': user.email,
             'name': user.name,
-            'user_type': user.user_type
+            'user_type': user.user_type,
+            'user_type_id': user_type_id
         })
