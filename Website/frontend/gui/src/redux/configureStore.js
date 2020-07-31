@@ -2,14 +2,17 @@
 import thunk from 'redux-thunk';
 import logger from 'redux-logger'
 import { createStore, combineReducers, applyMiddleware } from 'redux';
+////React-Redux-Persist
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 //custom imports
-import { Auth_reducer } from './auth_reducer'
+// import { Auth_reducer } from './auth_reducer'
+import rootReducer from './root_reducer'
 
 export const configureStore = () => {
     const store = createStore(
-        combineReducers({
-            auth: Auth_reducer,
-        }), applyMiddleware(thunk, logger)
+        rootReducer, applyMiddleware(thunk, logger)
     );
-    return store;
+    const persistor = persistStore(store);
+    return { store, persistor };
 }

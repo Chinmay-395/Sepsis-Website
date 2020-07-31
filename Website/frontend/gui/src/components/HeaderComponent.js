@@ -7,7 +7,7 @@ import {
   Nav,
   NavItem,
   NavLink,
-  NavbarText,
+  // NavbarText,
 } from 'reactstrap';
 import { connect } from 'react-redux'
 
@@ -38,8 +38,8 @@ class Header extends Component {
   }
   createNavItem = ({ href, text, className, key }) => {
     if (this.props.auth.token !== null) {
-      console.log("the email", localStorage.getItem('email'))
-      console.log("The text", text)
+      // console.log("the email", localStorage.getItem('email'))
+      // console.log("The text", text)
       if (text === 'LOGIN') {
         return (
           <>

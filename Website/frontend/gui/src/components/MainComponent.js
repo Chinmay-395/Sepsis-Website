@@ -16,7 +16,9 @@ class Main extends Component {
             console.log(">>>>", this.props)
         }
     }
-
+    componentDidUpdate() {
+        console.log("componentUdate>>>>", this.props)
+    }
     render() {
 
         return (

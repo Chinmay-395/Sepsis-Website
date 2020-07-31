@@ -32,7 +32,7 @@ export const checkAuthTimeout = expirationTime => {
 export const logout = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('token');
-    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('user_type')
     return {
         type: actionTypes.AUTH_LOGOUT,
         payload: null
@@ -48,11 +48,13 @@ export const authLogin = (username, password) => (dispatch) => {
 
     }).then(response => {
         const token = response.data.token;
-        const email = response.data.email
+        const email = response.data.email;
+        const user_type = response.data.user_type
         const expirationDate = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
         localStorage.setItem('email', email);
         localStorage.setItem('token', token);
-        localStorage.setItem('expirationDate', expirationDate);
+        localStorage.setItem('user_type', user_type)
+        // console.log("THE DATA AFTER LOGGING........", response.data)
         dispatch(authSuccess(token));
         dispatch(checkAuthTimeout(3600));
     }).catch(error => dispatch(authFail(error.message)))

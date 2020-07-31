@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Redirect, Route } from "react-router-dom";
-import { authLogin, logout, } from '../redux/ActionCreator'
+import { Redirect, /*Route*/ } from "react-router-dom";
+import { authLogin, } from '../redux/ActionCreator'
 import {
   Container, Col, Form,
   FormGroup, Label, Input,
