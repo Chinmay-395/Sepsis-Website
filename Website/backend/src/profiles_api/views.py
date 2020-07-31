@@ -38,5 +38,6 @@ class UserLoginApiView(ObtainAuthToken):
             'token': token.key,
             'user_id': user.pk,
             'email': user.email,
-            'name': user.name
+            'name': user.name,
+            'user_type': user.user_type
         })

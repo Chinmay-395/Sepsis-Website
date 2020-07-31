@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect, Link } from 'react-router-dom'
+// import { Redirect, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Container, Row, Col, Card, CardBody, CardTitle } from "reactstrap";
 // import { Link, withRouter } from 'react-router'

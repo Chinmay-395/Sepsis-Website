@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-
+import { PersistGate } from 'redux-persist/integration/react'
 //Ant-Design imports
 import 'antd/dist/antd.css';
 //Custom imports
@@ -10,7 +10,9 @@ import './App.css';
 import Main from './components/MainComponent';
 import { configureStore } from './redux/configureStore'
 
-const store = configureStore();
+
+const store = configureStore().store;
+const persistor = configureStore().persistor
 
 class App extends Component {
 
@@ -18,9 +20,11 @@ class App extends Component {
     return (
       <Provider store={store}>
         <BrowserRouter>
-          <div className="App">
-            <Main />
-          </div>
+          <PersistGate persistor={persistor}>
+            <div className="App">
+              <Main />
+            </div>
+          </PersistGate>
         </BrowserRouter>
       </Provider>
     );
