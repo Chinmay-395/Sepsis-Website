@@ -3,6 +3,8 @@ from rest_framework.serializers import (
     StringRelatedField, PrimaryKeyRelatedField, CharField, SerializerMethodField)
 from .models import Doctor, Patient, SepsisOfPatient
 from profiles_api.models import UserProfile
+import json
+import ast
 
 
 class PatientSerializer(ModelSerializer):
@@ -40,12 +42,13 @@ class DoctorSerializer(ModelSerializer):
     doc_name = CharField(read_only=True, source="doc.name")
     patient_set_name = SerializerMethodField()
     doctor = SerializerMethodField()
+    each_pat_json = SerializerMethodField()
 
     class Meta:
         model = Doctor
 
         fields = ['id', 'doc_name',
-                  'patient_set', 'patient_set_name', 'doctor']
+                  'patient_set', 'patient_set_name', 'doctor', 'each_pat_json']
 
     def get_doctor(self, obj):
         print("doctor's id ->>>>>>>>>>>>", str(obj.id))
@@ -77,8 +80,26 @@ class DoctorSerializer(ModelSerializer):
             # pat_list += [patient_iside_obj_name]
             pat_list.append(patient_iside_obj_name)
 
-        print(pat_list)
+        print("CHECKOUT PAT_LIST", pat_list)
         return pat_list  # str(obj)
+
+    def get_each_pat_json(self, obj):
+        data_list = []
+        new_list = []
+        for patient in obj.patient_set.all():
+            pat_id = patient.id
+            pat_name = patient.pat.name
+            data = json.dumps({'patient_id': pat_id, 'patient_name': pat_name})
+            print("TJE DATA", data)
+            # data_list.append(data)
+            x = ast.literal_eval(data)
+            data_list.append(x)
+            print(x)
+            # new_list += x
+            # data_list = json.loads(data)
+        print("THE DATA I want ++++++++++>", data_list)
+        # print("THE DATA I want ++++++++++>", new_list)
+        return data_list
 
 
 class SepsisPatientSerializer(ModelSerializer):
