@@ -1,7 +1,26 @@
 import React from 'react';
 import { Table } from 'reactstrap';
+import { connect } from 'react-redux'
+//custom imports
+import { fetchDocData } from '../../redux/ActionCreator'
 
+// class PatientsTable extends React.Component {
+//   componentWillMount() {
+//     console.log("THE DOC's Patient-Table ----->", this.props)
+
+//   }
+// componentDidMount() {
+//   console.log("THE DOC's Patient-Table ----->", this.props)
+// }
+
+// componentDidUpdate() {
+//   console.log("THE DOC's Patient-Table ----->", this.props)
+//   console.log("Patient information ==========>", this.props.props.doc_data)
+// }
+// render() {
+// }
 const PatientsTable = (props) => {
+  console.log("The info", props)
   return (
     <Table>
       <thead>
@@ -32,14 +51,29 @@ const PatientsTable = (props) => {
           <td>@twitter</td>
         </tr>
       </tbody>
-    </Table>
+    </Table >
   )
 }
 
+
+
+
+
 const HomePage = (props) => {
+  console.log("THE DOC's HomePage ----->", props)
   return (
-    <PatientsTable />
+    <PatientsTable info={props.doctor_data} />
   );
 }
 
-export default HomePage;
+
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth,
+    doctor_data: state.doc_data
+  }
+}
+const mapDispatchToProps = dispatch => ({
+  fetchDocData: () => dispatch(fetchDocData())
+})
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage)

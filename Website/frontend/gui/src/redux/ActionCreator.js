@@ -106,9 +106,21 @@ export const fetchDocData = () => (dispatch) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Token ${localStorage.getItem('token')}`
             }
-        }).then(response => { console.log("THE data+++++++++++++++++++++", response.data) })
+        }).then(response => {
+            console.log("THE data+++++++++++++++++++++", response.data)
+            let x = response.data
+            console.log("patient_set", x.patient_set)
+            dispatch(doc_data((response.data)))
+        })
             .catch(error => console.log("THE ERROR+++++++++++++++", error))
     }
     fetchDocData()
 
+}
+
+export const doc_data = (data) => {
+    return {
+        type: actionTypes.DOCDATA_FETCHED,
+        payload: data
+    }
 }
