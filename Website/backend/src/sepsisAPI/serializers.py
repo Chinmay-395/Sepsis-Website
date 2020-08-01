@@ -40,15 +40,15 @@ class PatientSerializer(ModelSerializer):
 
 class DoctorSerializer(ModelSerializer):
     doc_name = CharField(read_only=True, source="doc.name")
-    patient_set_name = SerializerMethodField()
+    # patient_set_name = SerializerMethodField()
     doctor = SerializerMethodField()
     each_pat_json = SerializerMethodField()
 
     class Meta:
         model = Doctor
 
-        fields = ['id', 'doc_name',
-                  'patient_set', 'patient_set_name', 'doctor', 'each_pat_json']
+        fields = ['id', 'doc_name',  # 'patient_set', 'patient_set_name',
+                  'doctor', 'each_pat_json']
 
     def get_doctor(self, obj):
         print("doctor's id ->>>>>>>>>>>>", str(obj.id))
