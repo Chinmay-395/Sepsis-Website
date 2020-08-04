@@ -1,79 +1,84 @@
-import React from 'react';
-import { Table } from 'reactstrap';
-import { connect } from 'react-redux'
+import React from "react";
+import { Table } from "reactstrap";
+import { connect } from "react-redux";
+import { Icon, Spin } from "antd";
+
 //custom imports
-import { fetchDocData } from '../../redux/ActionCreator'
+import { fetchDocData } from "../../redux/ActionCreator";
 
-// class PatientsTable extends React.Component {
-//   componentWillMount() {
-//     console.log("THE DOC's Patient-Table ----->", this.props)
+const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
-//   }
-// componentDidMount() {
-//   console.log("THE DOC's Patient-Table ----->", this.props)
-// }
+const RenderPatItem = (pat) => {
+  console.log("The renderPatItem object", pat);
+  console.log("The renderPatItem each object", pat.pat);
+  // console.log(pat.pat.patient_id);
+  // const iteration_number = pat.pat;
+  // console.log("The walking dead", iteration_number);
 
-// componentDidUpdate() {
-//   console.log("THE DOC's Patient-Table ----->", this.props)
-//   console.log("Patient information ==========>", this.props.props.doc_data)
-// }
-// render() {
-// }
-const PatientsTable = (props) => {
-  console.log("The info", props)
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Username</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Larry</td>
-          <td>the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </tbody>
-    </Table >
-  )
-}
-
-
-
-
+    <>
+      <tr>
+        <td>{pat.pat.iteration}</td>
+        <td>{pat.pat.patient_id}</td>
+        <td>{pat.pat.patient_name}</td>
+        <td>Stats need to be added</td>
+      </tr>
+    </>
+  );
+};
 
 const HomePage = (props) => {
-  console.log("THE DOC's HomePage ----->", props)
-  return (
-    <PatientsTable info={props.doctor_data} />
-  );
-}
+  console.log("NEW PROPS", props);
+  if (props.doctor_data.isLoading) {
+    console.log("I ran");
+    return (
+      <div className="container">
+        <div className="row">
+          <h3>Loading</h3>
+          <Spin indicator={antIcon} />
+        </div>
+      </div>
+    );
+  } else {
+    console.log("the props", props);
+    const theArray = props.doctor_data.doc_data.each_pat_json;
+    const docData = theArray.map((pat, index) => {
+      console.log("RENDERPATITEM happens to be called", pat);
+      console.log(index);
+      pat.iteration = index + 1;
+      console.log(pat);
 
+      return (
+        <>
+          <RenderPatItem pat={pat} />
+        </>
+      );
+    });
+
+    console.log(theArray);
+    return (
+      <Table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>{docData}</tbody>
+      </Table>
+    );
+  }
+};
 
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    doctor_data: state.doc_data
-  }
-}
-const mapDispatchToProps = dispatch => ({
-  fetchDocData: () => dispatch(fetchDocData())
-})
-export default connect(mapStateToProps, mapDispatchToProps)(HomePage)
+    doctor_data: state.doc_data,
+  };
+};
+const mapDispatchToProps = (dispatch) => ({
+  fetchDocData: () => dispatch(fetchDocData()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
