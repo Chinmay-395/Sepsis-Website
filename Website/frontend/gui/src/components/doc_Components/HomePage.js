@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState, setState } from "react";
 import { Table } from "reactstrap";
 import { connect } from "react-redux";
 import { Icon, Spin } from "antd";
-
+import { Redirect, Route, Link } from "react-router-dom";
 //custom imports
 import { fetchDocData } from "../../redux/ActionCreator";
-
+import Graphvisulation from "./../pat_Components/GraphComponent";
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
 // let url = "http://127.0.0.1:8000/sepsisAPI/patspat/";
@@ -22,9 +22,13 @@ const RenderPatItem = (pat) => {
       <tr>
         <td>{pat.pat.iteration}</td>
         <td>{pat.pat.patient_id}</td>
-        <td onClick={() => renderPatientStatsPage(pat.pat.patient_id)}>
+        {/* <td onClick={() => renderPatientStatsPage(pat.pat.patient_id)}>
           {pat.pat.patient_name}
-          {/* <a href={url + `${pat.pat.patient_id}/`}></a> */}
+        </td> */}
+        <td onClick={() => renderPatientStatsPage(pat.pat.patient_id)}>
+          <Link to={{ pathname: "/stats", state: { pass: "some data" } }}>
+            {pat.pat.patient_name}
+          </Link>
         </td>
         <td>Stats need to be added</td>
       </tr>
@@ -78,6 +82,7 @@ const HomePage = (props) => {
 };
 
 const mapStateToProps = (state) => {
+  console.log("THE STATE HAS SHIT", state);
   return {
     auth: state.auth,
     doctor_data: state.doc_data,
