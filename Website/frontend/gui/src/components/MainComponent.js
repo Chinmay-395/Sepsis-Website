@@ -3,7 +3,7 @@ import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import Home from "./HomeComponent";
 import AuthenticationComponent from "./AuthenticationComponent";
-import Graphvisulation from "./pat_Components/GraphComponent";
+import Graphvisulation from "./GraphComponent";
 import Header from "./HeaderComponent";
 
 class Main extends Component {

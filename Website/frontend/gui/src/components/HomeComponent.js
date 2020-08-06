@@ -3,7 +3,7 @@ import React, { Component } from "react";
 // import { Link, withRouter } from 'react-router'
 import { connect } from "react-redux";
 
-import Graphvisulation from "./pat_Components/GraphComponent";
+import Graphvisulation from "./GraphComponent";
 import HomePage from "./doc_Components/HomePage";
 import { fetchDocData } from "../redux/ActionCreator";
 
