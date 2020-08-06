@@ -51,7 +51,6 @@ export const authLogin = (username, password) => (dispatch) => {
       const token = response.data.token;
       const email = response.data.email;
       const user_type = response.data.user_type;
-      const expirationDate = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
       localStorage.setItem("email", email);
       localStorage.setItem("token", token);
       localStorage.setItem("user_type", user_type);
@@ -119,7 +118,7 @@ export const fetchDocData = () => (dispatch) => {
       })
       .then((response) => {
         // console.log("THE data+++++++++++++++++++++", response.data)
-        let x = response.data;
+        // let x = response.data;
         // console.log("patient_set", x.patient_set)
         dispatch(doc_data(response.data));
       })

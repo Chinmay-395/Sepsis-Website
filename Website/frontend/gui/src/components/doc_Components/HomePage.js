@@ -8,19 +8,24 @@ import { fetchDocData } from "../../redux/ActionCreator";
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
+// let url = "http://127.0.0.1:8000/sepsisAPI/patspat/";
+function renderPatientStatsPage(val) {
+  console.log("I RAN IN renderPatientStatsPage");
+  console.log("The patient-ID", val);
+}
 const RenderPatItem = (pat) => {
   console.log("The renderPatItem object", pat);
   console.log("The renderPatItem each object", pat.pat);
-  // console.log(pat.pat.patient_id);
-  // const iteration_number = pat.pat;
-  // console.log("The walking dead", iteration_number);
 
   return (
     <>
       <tr>
         <td>{pat.pat.iteration}</td>
         <td>{pat.pat.patient_id}</td>
-        <td>{pat.pat.patient_name}</td>
+        <td onClick={() => renderPatientStatsPage(pat.pat.patient_id)}>
+          {pat.pat.patient_name}
+          {/* <a href={url + `${pat.pat.patient_id}/`}></a> */}
+        </td>
         <td>Stats need to be added</td>
       </tr>
     </>
