@@ -3,7 +3,7 @@ import React, { Component } from "react";
 // import { Link, withRouter } from 'react-router'
 import { connect } from "react-redux";
 
-import Graphvisulation from "./GraphComponent";
+import PatHomePage from "./pat_Components/PatHomePage";
 import HomePage from "./doc_Components/HomePage";
 import { fetchDocData } from "../redux/ActionCreator";
 
@@ -11,7 +11,7 @@ class Home extends Component {
   componentWillMount() {
     console.log("ALOHA from Home");
     console.log("PROPS>>>", this.props);
-    this.props.fetchDocData();
+    // this.props.fetchDocData();
   }
   componentDidUpdate() {
     console.log("***************WE ARE*********");
@@ -26,7 +26,7 @@ class Home extends Component {
         </div>
       );
     } else if (localStorage.getItem("user_type") === "PATIENT") {
-      return <Graphvisulation />;
+      return <PatHomePage />;
     } else {
       return (
         <div>
@@ -43,6 +43,6 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  fetchDocData: () => dispatch(fetchDocData()),
+  // fetchDocData: () => dispatch(fetchDocData()),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
