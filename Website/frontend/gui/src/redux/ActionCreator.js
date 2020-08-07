@@ -154,3 +154,49 @@ export const doc_dataFailed = (errMess) => {
     payload: errMess,
   };
 };
+
+//Fetching the Patient's Data regarding sepsis
+export const fetchPatData = (pat_id) => (dispatch) => {
+  const id = pat_id; //localStorage.getItem("user_type_id"); // Doctor-Model-id
+  dispatch(pat_dataLoading());
+  let getPatData = async () => {
+    await axios
+      .get(`http://127.0.0.1:8000/sepsisAPI/patspat/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((response) => {
+        console.log("THE data+++++++++++++++++++++", response.data);
+        // let x = response.data;
+        // console.log("patient_set", x.patient_set)
+        dispatch(pat_data(response.data));
+      })
+      .catch((error) => {
+        console.log("THE ERROR+++++++++++++++", error);
+        dispatch(pat_dataFailed(error.message));
+      });
+  };
+  getPatData();
+};
+
+export const pat_data = (data) => {
+  return {
+    type: actionTypes.PATDATA_FETCHED,
+    payload: data,
+  };
+};
+
+export const pat_dataLoading = () => {
+  return {
+    type: actionTypes.PATDATA_LOADING,
+  };
+};
+
+export const pat_dataFailed = (errMess) => {
+  return {
+    type: actionTypes.PATDATA_FAILED,
+    payload: errMess,
+  };
+};

@@ -16,6 +16,7 @@ const rootReducer = combineReducers({
   auth: Auth_reducer,
   //other data
   doc_data: Doc_reducer,
+  pat_data: Pat_reducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

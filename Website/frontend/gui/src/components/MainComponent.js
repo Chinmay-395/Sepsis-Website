@@ -29,9 +29,13 @@ class Main extends Component {
       console.log("The auth props", this.props.auth);
       if (this.props.auth.token.token === localStorage.getItem("token")) {
         if (
-          this.props.auth.token.user_type_id === parseInt(match.params.pat_id)
+          this.props.auth.token.user_type_id ===
+            parseInt(match.params.pat_id) &&
+          this.props.auth.token.user_type === "PATIENT"
         ) {
-          return <Graphvisulation />;
+          return <Graphvisulation patientId={match.params.pat_id} />;
+        } else if (this.props.auth.token.user_type === "DOCTOR") {
+          return <Graphvisulation patientId={match.params.pat_id} />;
         } else {
           return (
             <div>

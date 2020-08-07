@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
+import { fetchPatData } from "../redux/ActionCreator";
 
 class Graphvisulation extends React.Component {
   //I want to remove any sort of authentication inside this component
@@ -17,6 +18,10 @@ class Graphvisulation extends React.Component {
       "user-type in local",
       typeof localStorage.getItem("user_type_id")
     );
+    this.props.fetchPatData(parseInt(this.props.patientId));
+  }
+  componentDidUpdate() {
+    console.log(this.props.pat_data);
   }
   render() {
     return (
@@ -72,9 +77,10 @@ const mapStateToProps = (state) => {
   // console.log("THE STATE HAS ", state);
   return {
     auth: state.auth,
+    pat_data: state.pat_data,
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  // fetchDocData: () => dispatch(fetchDocData()),
+  fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Graphvisulation);

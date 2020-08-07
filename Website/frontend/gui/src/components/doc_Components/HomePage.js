@@ -39,7 +39,7 @@ class HomePage extends React.Component {
   render() {
     console.log("NEW PROPS", this.props);
 
-    if (this.props.doctor_data.isLoading) {
+    if (this.props.doctor_data.isLoading || this.props.auth.loading) {
       return (
         <div className="container">
           <div className="row">
