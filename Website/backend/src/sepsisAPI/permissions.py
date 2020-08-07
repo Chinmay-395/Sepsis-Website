@@ -11,7 +11,7 @@ class DoctorProfileView(permissions.BasePermission):
         # ID in the user-Profile
         print(">>>>>>>>>>REQUEST-ID ", request.user.id)
         # ID in the Doctor model
-        print(">>>>>>>>>>OBJECT-ID ", obj.id)  
+        print(">>>>>>>>>>OBJECT-ID ", obj.id)
         print(">>>>>>>>>>REQUEST-username ", request.user)
         print(">>>>>>>>>>OBJECT-username ", obj)
         print(">>>>>>>>>>OBJECT-email ", obj.doc.email)
@@ -44,10 +44,17 @@ class PatientProfileView(permissions.BasePermission):
         print("permissions.SAFE_METHODS>>>>>", permissions.SAFE_METHODS)
         if request.method in permissions.SAFE_METHODS:
             print(">>>>>>>>>> ", request.user)
-
             print(">>>>>>>>>> ", obj)
+            print("__________", request.user.id)
             print("OBJECT-ID>>>>>>>>>", obj.id)
-            return True
+            print("OBJECT_PAT_ID", obj.pat.id)
+            print("THe patient's doctor is", obj.doctor.doc.id)
+            print("OBJ-EMAIL", obj.pat.email)
+            print("REQUEST-EMAIL", request.user.email)
+            if(request.user.id == obj.pat.id or request.user.id == obj.doctor.doc.id):
+                return True
+            else:
+                return False
 
         # if request.method in
         return obj.id == request.user.id

@@ -1,29 +1,29 @@
 import * as actionTypes from "./ActionTypes";
 
 const initialState = {
-  isLoading: true,
+  isLoading: false,
   errMess: null,
-  doc_data: [],
+  pat_data: [],
 };
-export const Doc_reducer = (state = initialState, action) => {
+export const Pat_reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.DOCDATA_FETCHED:
+    case actionTypes.PATDATA_FETCHED:
       return {
         ...state,
         isLoading: false,
         errMess: null,
-        doc_data: action.payload,
+        pat_data: action.payload,
       };
 
-    case actionTypes.DOCDATA_LOADING:
-      return { ...state, isLoading: true, errMess: null, doc_data: [] };
+    case actionTypes.PATDATA_LOADING:
+      return { ...state, isLoading: true, errMess: null, pat_data: [] };
 
-    case actionTypes.DOCDATA_FAILED:
+    case actionTypes.PATDATA_FAILED:
       return {
         ...state,
         isLoading: false,
         errMess: action.payload,
-        doc_data: [],
+        pat_data: [],
       };
     default:
       return state;

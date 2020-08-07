@@ -1,31 +1,31 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import { Redirect, /*Route*/ } from "react-router-dom";
-import { authLogin, } from '../redux/ActionCreator'
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Redirect /*Route*/ } from "react-router-dom";
+import { authLogin } from "../redux/ActionCreator";
 import {
-  Container, Col, Form,
-  FormGroup, Label, Input,
+  Container,
+  Col,
+  Form,
+  FormGroup,
+  Label,
+  Input,
   Button,
-} from 'reactstrap';
-
+} from "reactstrap";
 
 class AuthenticationComponent extends Component {
-
   componentDidMount() {
-    console.log("HEHI")
+    console.log("HEHI");
   }
   handleFormSubmit = () => {
     // preventDefault();
-    console.log("EMail & password", this.email.value, this.password.value)
-    this.props.authLogin(this.email.value, this.password.value)
-  }
-
+    console.log("EMail & password", this.email.value, this.password.value);
+    this.props.authLogin(this.email.value, this.password.value);
+  };
 
   render() {
     if (this.props.auth.token !== null) {
-      return (
-        <Redirect to="/" />
-      )
+      console.log("I redirected");
+      return <Redirect to="/" />;
     } else {
       return (
         <Container>
@@ -39,7 +39,7 @@ class AuthenticationComponent extends Component {
                   name="email"
                   id="exampleEmail"
                   placeholder="myemail@email.com"
-                  innerRef={(input) => this.email = input}
+                  innerRef={(input) => (this.email = input)}
                 />
               </FormGroup>
             </Col>
@@ -51,29 +51,31 @@ class AuthenticationComponent extends Component {
                   name="password"
                   id="examplePassword"
                   placeholder="********"
-                  innerRef={(input) => this.password = input}
+                  innerRef={(input) => (this.password = input)}
                 />
               </FormGroup>
             </Col>
             <Button onClick={() => this.handleFormSubmit()}>Submit</Button>
           </Form>
         </Container>
-      )
+      );
     }
-
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-  }
-}
+  };
+};
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   authLogin: (username, password) => {
-    dispatch(authLogin(username, password))
-  }
-})
+    dispatch(authLogin(username, password));
+  },
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthenticationComponent)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AuthenticationComponent);
