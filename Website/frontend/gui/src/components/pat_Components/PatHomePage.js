@@ -9,12 +9,8 @@ import { Jumbotron, Button } from "reactstrap";
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
 class PatHomePage extends React.Component {
-  componentWillMount() {
-    // this.props.fetchDocData();
-    console.log("Component Will Mount");
-  }
   render() {
-    console.log("NEW PROPS", this.props);
+    // console.log("NEW PROPS", this.props);
 
     if (this.props.patient_data.isLoading) {
       console.log("I ran");
@@ -27,8 +23,6 @@ class PatHomePage extends React.Component {
         </div>
       );
     } else {
-      console.log("the props", this.props);
-
       return (
         <>
           <Jumbotron>
@@ -43,7 +37,11 @@ class PatHomePage extends React.Component {
               content out within the larger container.
             </p>
             <p className="lead">
-              <Button color="primary">Learn More</Button>
+              <Button color="link">
+                <Link to={`/stats/${this.props.auth.token.user_type_id}`}>
+                  Check Stats
+                </Link>
+              </Button>
             </p>
           </Jumbotron>
         </>

@@ -5,32 +5,33 @@ import { connect } from "react-redux";
 
 import PatHomePage from "./pat_Components/PatHomePage";
 import HomePage from "./doc_Components/HomePage";
-import { fetchDocData } from "../redux/ActionCreator";
 
 class Home extends Component {
-  componentWillMount() {
-    console.log("ALOHA from Home");
-    console.log("PROPS>>>", this.props);
-    // this.props.fetchDocData();
+  componentDidMount() {
+    console.log("PROPS FOM general-Home-component", this.props);
   }
-  componentDidUpdate() {
-    console.log("***************WE ARE*********");
-  }
-
   render() {
-    console.log("THE USER IS A", localStorage.getItem("user_type"));
-    if (localStorage.getItem("user_type") === "DOCTOR") {
-      return (
-        <div>
-          <HomePage />
-        </div>
-      );
-    } else if (localStorage.getItem("user_type") === "PATIENT") {
-      return <PatHomePage />;
+    // console.log("THE USER IS A", localStorage.getItem("user_type"));
+    if (this.props.auth.token !== null) {
+      if (this.props.auth.token.user_type === "DOCTOR") {
+        return (
+          <div>
+            <HomePage />
+          </div>
+        );
+      } else if (this.props.auth.token.user_type === "PATIENT") {
+        return <PatHomePage />;
+      } else {
+        return (
+          <div>
+            <h1>You aren't suppose to be here</h1>
+          </div>
+        );
+      }
     } else {
       return (
         <div>
-          <h1>You aren't suppose to be here</h1>
+          <h1>You aren't Authenticated</h1>
         </div>
       );
     }

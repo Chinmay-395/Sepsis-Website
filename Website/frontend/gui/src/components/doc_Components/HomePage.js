@@ -17,7 +17,9 @@ const RenderPatItem = (pat) => {
         <td>{pat.pat.iteration}</td>
         <td>{pat.pat.patient_id}</td>
         <td>
-          <Link to="/stats">{pat.pat.patient_name}</Link>
+          <Link to={`/stats/${pat.pat.patient_id}`}>
+            {pat.pat.patient_name}
+          </Link>
         </td>
         <td>Stats need to be added</td>
       </tr>
@@ -26,14 +28,18 @@ const RenderPatItem = (pat) => {
 };
 
 class HomePage extends React.Component {
-  componentWillMount() {
-    this.props.fetchDocData();
+  componentDidMount() {
+    // sending the id of the doctor model
+    // so as to fetch the particular doctor
+    let doc_id = this.props.auth.token.user_type_id;
+    console.log("THE DOCTOR ID THAT NEEDS TO BE SENT", doc_id);
+    this.props.fetchDocData(doc_id);
+    console.log("I RAN FIRST");
   }
   render() {
     console.log("NEW PROPS", this.props);
 
     if (this.props.doctor_data.isLoading) {
-      console.log("I ran");
       return (
         <div className="container">
           <div className="row">
@@ -57,8 +63,6 @@ class HomePage extends React.Component {
           </>
         );
       });
-
-      console.log(theArray);
       return (
         <Table>
           <thead>
@@ -84,6 +88,6 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  fetchDocData: () => dispatch(fetchDocData()),
+  fetchDocData: (doc_id) => dispatch(fetchDocData(doc_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

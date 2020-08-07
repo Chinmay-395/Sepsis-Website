@@ -33,6 +33,7 @@ export const logout = () => {
   localStorage.removeItem("email");
   localStorage.removeItem("token");
   localStorage.removeItem("user_type");
+  localStorage.removeItem("user_type_id");
   return {
     type: actionTypes.AUTH_LOGOUT,
     payload: null,
@@ -48,13 +49,19 @@ export const authLogin = (username, password) => (dispatch) => {
       password: password,
     })
     .then((response) => {
-      const token = response.data.token;
-      const email = response.data.email;
-      const user_type = response.data.user_type;
+      let token_auth = response.data.token;
+      let email = response.data.email;
+      let user_type = response.data.user_type;
       localStorage.setItem("email", email);
-      localStorage.setItem("token", token);
+      localStorage.setItem("token", token_auth);
       localStorage.setItem("user_type", user_type);
       localStorage.setItem("user_type_id", response.data.user_type_id);
+      const token = {
+        token: token_auth,
+        user_type_id: response.data.user_type_id,
+        user_type: user_type,
+      };
+      console.log("WOLOWOLO wolowitz", JSON.stringify(token));
       // console.log("THE DATA AFTER LOGGING........", response.data)
       dispatch(authSuccess(token));
       dispatch(checkAuthTimeout(3600));
@@ -72,41 +79,39 @@ export const authSignup = (username, email, password) => (dispatch) => {
     })
     .then((response) => {
       const token = response.data.key;
-      const expirationDate = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
       localStorage.setItem("token", token);
-      localStorage.setItem("expirationDate", expirationDate);
       dispatch(authSuccess(token));
       dispatch(checkAuthTimeout(3600));
     })
     .catch((error) => dispatch(authFail(error.message)));
 };
 
-export const authCheckState = () => {
-  console.log("auth check state ran");
-  return (dispatch) => {
-    const token = localStorage.getItem("token");
-    if (token === undefined) {
-      console.log(">>>> dispatching logout");
-      dispatch(logout());
-    } else {
-      const expirationDate = new Date(localStorage.getItem("expirationDate"));
-      if (expirationDate <= new Date()) {
-        dispatch(logout());
-      } else {
-        dispatch(authSuccess(token));
-        dispatch(
-          checkAuthTimeout(
-            (expirationDate.getTime() - new Date().getTime()) / 1000
-          )
-        );
-      }
-    }
-  };
-};
+// export const authCheckState = () => {
+//   console.log("auth check state ran");
+//   return (dispatch) => {
+//     const token = localStorage.getItem("token");
+//     if (token === undefined) {
+//       console.log(">>>> dispatching logout");
+//       dispatch(logout());
+//     } else {
+//       const expirationDate = new Date(localStorage.getItem("expirationDate"));
+//       if (expirationDate <= new Date()) {
+//         dispatch(logout());
+//       } else {
+//         dispatch(authSuccess(token));
+//         dispatch(
+//           checkAuthTimeout(
+//             (expirationDate.getTime() - new Date().getTime()) / 1000
+//           )
+//         );
+//       }
+//     }
+//   };
+// };
 
 //docAction will be the ActionCreators for docData
-export const fetchDocData = () => (dispatch) => {
-  const id = localStorage.getItem("user_type_id"); // Doctor-Model-id
+export const fetchDocData = (doc_id) => (dispatch) => {
+  const id = doc_id; //localStorage.getItem("user_type_id"); // Doctor-Model-id
   dispatch(doc_dataLoading());
   let getDocData = async () => {
     await axios

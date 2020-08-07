@@ -20,6 +20,34 @@ class Main extends Component {
     console.log("componentUdate>>>>", this.props);
     console.log("----", this.props.location);
   }
+
+  PatWithId = ({ match }) => {
+    console.log("THE MATCH", match);
+    console.log(typeof match.params.pat_id);
+    console.log(this.props);
+    if (this.props.auth.token !== null) {
+      console.log("The auth props", this.props.auth);
+      if (this.props.auth.token.token === localStorage.getItem("token")) {
+        if (
+          this.props.auth.token.user_type_id === parseInt(match.params.pat_id)
+        ) {
+          return <Graphvisulation />;
+        } else {
+          return (
+            <div>
+              <h2>You are not allowed here</h2>
+            </div>
+          );
+        }
+      } else {
+        // This is where the user must not come
+        return <h2>You are authenticated but not suppose be here</h2>;
+      }
+    } else {
+      return <h2>+++++You are not authenticated</h2>;
+    }
+  };
+
   render() {
     return (
       <div>
@@ -27,7 +55,7 @@ class Main extends Component {
         <Switch>
           <Route path="/home" component={() => <Home />} />
           <Route path="/login" component={() => <AuthenticationComponent />} />
-          <Route path="/stats" component={() => <Graphvisulation />} />
+          <Route path="/stats/:pat_id" component={this.PatWithId} />
           <Redirect to="/home" />
         </Switch>
         {/* Footer component */}

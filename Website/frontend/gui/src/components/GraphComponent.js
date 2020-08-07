@@ -3,17 +3,22 @@ import { connect } from "react-redux";
 import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
 
 class Graphvisulation extends React.Component {
-  componentWillMount() {
+  //I want to remove any sort of authentication inside this component
+  //All the authentication stuff should be done prior
+  //This component will also be used for Monitoring in real-time
+  //__________ |Remove the authentication on this page ASAP| __________
+  componentDidMount() {
     console.log("----", this.props);
-    console.log(this.props.location);
-    // let location = useLocation();
-    // console.log(location);
-  }
-  componentDidUpdate() {
-    console.log("----", this.props);
+    console.log(
+      "user-type in props",
+      typeof this.props.auth.token.user_type_id
+    );
+    console.log(
+      "user-type in local",
+      typeof localStorage.getItem("user_type_id")
+    );
   }
   render() {
-    console.log("GRAPH PROPS", this.props);
     return (
       <div style={{ padding: "15px" }}>
         <Container fluid>
@@ -64,7 +69,7 @@ class Graphvisulation extends React.Component {
   }
 }
 const mapStateToProps = (state) => {
-  console.log("THE STATE HAS ", state);
+  // console.log("THE STATE HAS ", state);
   return {
     auth: state.auth,
   };
