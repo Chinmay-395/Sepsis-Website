@@ -48,9 +48,10 @@ class PatientProfileView(permissions.BasePermission):
             print("__________", request.user.id)
             print("OBJECT-ID>>>>>>>>>", obj.id)
             print("OBJECT_PAT_ID", obj.pat.id)
+            print("THe patient's doctor is", obj.doctor.doc.id)
             print("OBJ-EMAIL", obj.pat.email)
             print("REQUEST-EMAIL", request.user.email)
-            if(request.user.id == obj.pat.id):
+            if(request.user.id == obj.pat.id or request.user.id == obj.doctor.doc.id):
                 return True
             else:
                 return False
