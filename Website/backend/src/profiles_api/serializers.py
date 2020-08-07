@@ -7,7 +7,7 @@ from rest_framework.serializers import (
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    idOfTheUser = SerializerMethodField()
+    # idOfTheUser = SerializerMethodField()
 
     class Meta:
         model = models.UserProfile
@@ -22,8 +22,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             # }
         }
 
-    def get_idOfTheUser(self, obj):
-        print("BOX-----------", obj)
+    # def get_idOfTheUser(self, obj):
+    #     print("BOX-----------", obj)
 
     def create(self, validate_data):
         print("Validated data-----", validate_data)
