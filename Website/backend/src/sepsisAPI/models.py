@@ -34,9 +34,6 @@ class Patient(models.Model):
     def __str__(self):
         return f'{self.pat.name}'
 
-    # def get_name_of_pat(self):
-    #     for name in
-
 
 class SepsisOfPatient(models.Model):
     patient = models.ForeignKey(Patient,
@@ -83,8 +80,9 @@ post_save.connect(user_is_patient_or_doctor, sender=UserProfile)
 
 def create_patient_schemas(sender, instance, created, **kwargs):
     if created:
-        """ Check to see if doctor is avaiable 
-            Every doctor can attend 3 patient simultaneously #This is assumed
+        """[#This is assumed] 
+            Check to see if doctor is avaiable 
+            Every doctor can attend 3 patient simultaneously 
         """
         docs = Doctor.objects.all()
         for doc in docs:
