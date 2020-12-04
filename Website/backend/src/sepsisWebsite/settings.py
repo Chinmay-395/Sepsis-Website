@@ -25,17 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # imported apps
-    # Django-Rest-Framework
+    # imported/third-party apps
+    'django.contrib.postgres',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    # Django-allauth
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'corsheaders',
+    'channels',
     # custom apps
     'profiles_api',
     'sepsisAPI',
@@ -53,24 +48,25 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'profiles_api.UserProfile'
 CORS_ORIGIN_ALLOW_ALL = True
 # ------------------------------- django-allauth --------------------------------------- #
-SITE_ID = 1
-AUTHENTICATION_BACKENDS = [
+"""A new Approach is being used and thereby doesn't needed."""
+# SITE_ID = 1
+# AUTHENTICATION_BACKENDS = [
 
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
+#     # Needed to login by username in Django admin, regardless of `allauth`
+#     'django.contrib.auth.backends.ModelBackend',
 
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# ACCOUNT_USERNAME_REQUIRED = True
-# Create a url so that after login the can go to a particular page
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-LOGIN_REDIRECT_URL = '/'
+#     # `allauth` specific authentication methods, such as login by e-mail
+#     'allauth.account.auth_backends.AuthenticationBackend',
+# ]
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# # ACCOUNT_USERNAME_REQUIRED = True
+# # Create a url so that after login the can go to a particular page
+# ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+# LOGIN_REDIRECT_URL = '/'
 # _________________________________________________________________________________________
 
 MIDDLEWARE = [
@@ -102,6 +98,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'sepsisWebsite.routing.application'
 WSGI_APPLICATION = 'sepsisWebsite.wsgi.application'
 # ------------------------------- Async Channels --------------------------------------- #
 
@@ -110,8 +107,12 @@ WSGI_APPLICATION = 'sepsisWebsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('PGDATABASE'),
+        'USER': os.getenv('PGUSER'),
+        'PASSWORD': os.getenv('PGPASSWORD'),
+        'HOST': os.getenv('PGHOST', 'localhost'),
+        'PORT': os.getenv('PGPORT', '5432'),
     }
 }
 
