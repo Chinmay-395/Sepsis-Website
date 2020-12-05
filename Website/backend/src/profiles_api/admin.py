@@ -8,6 +8,10 @@ class UserProfileAdmin(admin.ModelAdmin):
               "name",
               "user_type"]
 
+    list_filter = (
+        'user_type',
+    )
+
     list_display = ["email",
                     "name",
                     "user_type"]

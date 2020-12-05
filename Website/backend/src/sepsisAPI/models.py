@@ -10,8 +10,8 @@ class Doctor(models.Model):
     phd = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(null=True, blank=True)
 
-    def doc_id(self):
-        return f'{self.id}'
+    def get_queryset(self):
+        pass
 
     def __str__(self):
         return f'{self.doc.name}'
@@ -85,6 +85,7 @@ def create_patient_schemas(sender, instance, created, **kwargs):
             Every doctor can attend 3 patient simultaneously 
         """
         docs = Doctor.objects.all()
+        flag = 1  # this will indicate initially all the docs are unavaible
         for doc in docs:
             if doc.patient_set.all().count() < 3:
                 print(f"{doc} is avaiable")
@@ -102,11 +103,14 @@ def create_patient_schemas(sender, instance, created, **kwargs):
         """ What if all the doctors aren't available """
         if flag == 1:
             latest_doctor = Doctor.objects.last()
-            instance.doctor = latest_doctor
+            if latest_doctor == None:
+                pass
+            else:
+                instance.doctor = latest_doctor
+                print("The doctor assigned to you is", instance.doctor)
+                print(f"{latest_doctor.id} available")
             SepsisOfPatient.objects.create(patient=instance)
             instance.save()
-            print("The doctor assigned to you is", instance.doctor)
-            print(f"{latest_doctor.id} available")
 
     if created == False:
         print("--------------------------------- you are updating", instance.id)
@@ -117,6 +121,3 @@ def create_patient_schemas(sender, instance, created, **kwargs):
     tables for sepsis tracking.
 """
 post_save.connect(create_patient_schemas, sender=Patient)
-
-# def create_patient_sepsis_schemas(sender,instance,created,**kwargs):
-#     if created:
