@@ -103,6 +103,11 @@ def create_patient_schemas(sender, instance, created, **kwargs):
         """ What if all the doctors aren't available """
         if flag == 1:
             latest_doctor = Doctor.objects.last()
+            """ 
+            • What if there are no doctors at all? 
+            ans: Then the field would be None/empty. 
+                 The admin has to actually physically assign the doctor
+            """
             if latest_doctor == None:
                 pass
             else:
