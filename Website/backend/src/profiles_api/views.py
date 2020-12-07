@@ -62,5 +62,6 @@ class UserLoginApiView(ObtainAuthToken):
             'email': user.email,
             'name': user.name,
             'user_type': user.user_type,
-            'user_type_id': user_type_id
+            # the following code is commented, since it is referenced before assigned
+            # 'user_type_id': user_type_id
         })

@@ -103,7 +103,10 @@ class DoctorSerializer(ModelSerializer):
 
 
 class SepsisPatientSerializer(ModelSerializer):
+
     class Meta:
         model = SepsisOfPatient
-        fields = ["id", "heart_rate", "oxy_saturation", "temperature",
-                  "blood_pressure", "resp_rate", "mean_art_pre", "patient"]  # "__all__"
+        fields = ["heart_rate", "oxy_saturation", "temperature",
+                  "blood_pressure", "resp_rate", "mean_art_pre",
+                  "patient",
+                  ]  # "__all__"

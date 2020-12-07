@@ -7,13 +7,13 @@ from .models import (Doctor,
 
 
 class DoctorAdmin(admin.ModelAdmin):
-    fields = ['doc', 'phd', 'address']
-    list_display = ['doc', 'phd', 'address']
+    fields = ['doc', 'phd', 'address', 'id']
+    list_display = ['doc', 'phd', 'address', 'id']
 
 
 class PatientAdmin(admin.ModelAdmin):
-    fields = ['pat', 'age', 'gender', 'doctor']
-    list_display = ['pat', 'age', 'gender', 'doctor']
+    fields = ['pat', 'age', 'gender', 'doctor', 'id']
+    list_display = ['pat', 'age', 'gender', 'doctor', 'id']
     list_filter = (
         'doctor',
     )
@@ -24,11 +24,11 @@ class SepsisOfPatientAdmin(admin.ModelAdmin):
               'heart_rate',
               'oxy_saturation',
               'temperature', 'blood_pressure',
-              'resp_rate', 'mean_art_pre', ]
+              'resp_rate', 'mean_art_pre', 'id']
 
     list_display = ['patient', 'heart_rate', 'oxy_saturation',
                     'temperature', 'blood_pressure', 'resp_rate',
-                    'mean_art_pre', ]
+                    'mean_art_pre', 'id']
 
     list_filter = ['patient', ]
 

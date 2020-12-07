@@ -6,7 +6,7 @@ from .models import UserProfile
 class UserProfileAdmin(admin.ModelAdmin):
     fields = ["email",
               "name",
-              "user_type"]
+              "user_type", "id"]
 
     list_filter = (
         'user_type',
@@ -14,7 +14,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     list_display = ["email",
                     "name",
-                    "user_type"]
+                    "user_type", "id"]
 
 
 admin.site.register(UserProfile, UserProfileAdmin)

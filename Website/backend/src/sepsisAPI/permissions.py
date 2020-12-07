@@ -14,6 +14,7 @@ class DoctorProfileView(permissions.BasePermission):
         print(">>>>>>>>>>OBJECT-ID ", obj.id)
         print(">>>>>>>>>>REQUEST-username ", request.user)
         print(">>>>>>>>>>OBJECT-username ", obj)
+        print(">>>>>>>>>>REQUEST-email ", request.user.email)
         print(">>>>>>>>>>OBJECT-email ", obj.doc.email)
         if request.method in permissions.SAFE_METHODS:
             print(">>>>>>>>>> ", type(request.user.name))
