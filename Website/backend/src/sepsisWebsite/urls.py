@@ -5,5 +5,6 @@ urlpatterns = [
     path('api-auth/', include('profiles_api.urls')),
     path('admin/', admin.site.urls),
     # path('accounts/', include('allauth.urls')),
+    # path('sepsisWebSocket/', include('sepsisDynamic.urls')),
     path('sepsisAPI/', include('sepsisAPI.urls'))
 ]

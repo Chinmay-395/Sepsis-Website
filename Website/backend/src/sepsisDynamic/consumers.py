@@ -20,12 +20,16 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             ◘ room is a group of channels. If anyone sends a message to the room, 
             all channels in that room will receive that message.
         """
-        await self.channel_layer.group_add(
-            group='test',
-            channel=self.channel_name
-        )
-        print("THE CHANNEL NAME IS ------------> ", self.channel_name)
-        await self.accept()
+        user = self.scope['user']
+        if user.is_anonymous:
+            await self.close()
+        else:
+            await self.channel_layer.group_add(
+                group='test',
+                channel=self.channel_name
+            )
+            print("THE CHANNEL NAME IS ------------> ", self.channel_name)
+            await self.accept()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(

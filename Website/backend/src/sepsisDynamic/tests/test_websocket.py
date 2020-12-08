@@ -13,6 +13,7 @@ TEST_CHANNEL_LAYERS = {
 
 
 @pytest.mark.asyncio
+@pytest.mark.django_db(transaction=True)
 class TestWebSocket:
     async def test_can_connect_to_server(self, settings):
         """[summary]
@@ -80,4 +81,14 @@ class TestWebSocket:
         await channel_layer.group_send('test', message=message)
         response = await communicator.receive_json_from()
         assert response == message
+        await communicator.disconnect()
+
+    async def test_cannot_connect_to_socket(self, settings):
+        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        communicator = WebsocketCommunicator(
+            application=application,
+            path='/sepsisDynamic/'
+        )
+        connected, _ = await communicator.connect()
+        assert connected is False
         await communicator.disconnect()

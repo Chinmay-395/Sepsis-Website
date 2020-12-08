@@ -7,9 +7,6 @@ AUTH_URL = reverse('profiles_api:userprofile-list')
 # userprofile
 
 
-"""[Tests in the the doctor's perspective]
-"""
-
 PASSWORD = "test"
 
 
@@ -34,6 +31,8 @@ def create_user_as_patient(email='user_patient@example.com', name="example_patie
 
 
 class AuthenticationTest(APITestCase):
+    """The following Tests are in the the doctor's perspective"""
+
     def test_user_can_sign_up_as_doctor(self):
         payload = {
             "name": "test_userDoc_786",
@@ -56,6 +55,8 @@ class AuthenticationTest(APITestCase):
         })
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    """The following Tests are in the the patient's perspective"""
 
     def test_user_can_sign_up_as_patient(self):
         payload = {
