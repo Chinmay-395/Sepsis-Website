@@ -20,6 +20,7 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             ◘ room is a group of channels. If anyone sends a message to the room, 
             all channels in that room will receive that message.
         """
+        print("THE SCOPE is ====> \n", self.scope)
         await self.channel_layer.group_add(
             group='test',
             channel=self.channel_name
@@ -34,13 +35,16 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         await super().disconnect(code)
 
     async def echo_message(self, message):
+        print("THE ECHO MESSAGE ALSO RAN")
         await self.send_json({
             'type': message.get('type'),
             'data': message.get('data'),
         })
 
     async def receive_json(self, content, **kwargs):
+        print("THE RECEIVE FUNCTION RAN")
         message_type = content.get('type')
+        print("THE MESSAGE TYPE", message_type)
         if message_type == 'echo.message':
             await self.send_json({
                 'type': message_type,
