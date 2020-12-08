@@ -83,12 +83,12 @@ class TestWebSocket:
         assert response == message
         await communicator.disconnect()
 
-    # async def test_cannot_connect_to_socket(self, settings):
-    #     settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
-    #     communicator = WebsocketCommunicator(
-    #         application=application,
-    #         path='/sepsisDynamic/'
-    #     )
-    #     connected, _ = await communicator.connect()
-    #     assert connected is False
-    #     await communicator.disconnect()
+    async def test_cannot_connect_to_socket(self, settings):
+        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        communicator = WebsocketCommunicator(
+            application=application,
+            path='/sepsisDynamic/'
+        )
+        connected, _ = await communicator.connect()
+        assert connected is False
+        await communicator.disconnect()
