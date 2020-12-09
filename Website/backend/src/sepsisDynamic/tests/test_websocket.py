@@ -20,9 +20,10 @@ def create_user(email, password, name="Ahamad"):
     user = get_user_model().objects.create_user(
         email=email,
         name=name,
-        password=password
+        password=password,
+        user_type="PATIENT"
     )
-
+    user.save()
     token, created = Token.objects.get_or_create(
         user=user)
     access = token  # Token.key #for_user(user)
@@ -80,19 +81,49 @@ class TestWebSocket:
         assert response == message
         await communicator.disconnect()
 
-    async def test_can_send_and_receive_broadcast_messages(self, settings):
-        """[Note]
-        • the `channel layer` is used to broadcast a message to a group. 
-        Whereas the last test modeled a user talking to himself in an empty room, 
-        this most recent test represents a user talking to a room full of people.
-        """
-        """[summary]
-        In this we are using channel-layer and groups to send & receive
-        broadcasted data; this is very similar to upper test.
-        """
+    # async def test_can_send_and_receive_broadcast_messages(self, settings):
+    #     """[Note]
+    #     • the `channel layer` is used to broadcast a message to a group.
+    #     Whereas the last test modeled a user talking to himself in an empty room,
+    #     this most recent test represents a user talking to a room full of people.
+    #     """
+    #     """[summary]
+    #     In this we are using channel-layer and groups to send & receive
+    #     broadcasted data; this is very similar to upper test.
+    #     """
+    #     settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+    #     _, access = await create_user(
+    #         'test.user@example.com', 'pAssw0rd'
+    #     )
+    #     communicator = WebsocketCommunicator(
+    #         application=application,
+    #         path=f'/sepsisDynamic/?token={access}'
+    #     )
+    #     connected, _ = await communicator.connect()
+    #     message = {
+    #         'type': 'echo.message',
+    #         'data': 'This is a test message.',
+    #     }
+    #     channel_layer = get_channel_layer()
+    #     await channel_layer.group_send('test', message=message)
+    #     response = await communicator.receive_json_from()
+    #     assert response == message
+    #     await communicator.disconnect()
+
+    async def test_cannot_connect_to_socket(self, settings):
+        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        communicator = WebsocketCommunicator(
+            application=application,
+            path='/sepsisDynamic/'
+        )
+        connected, _ = await communicator.connect()
+        assert connected is False
+        await communicator.disconnect()
+
+    async def test_join_sepsis_pool(self, settings):
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
         _, access = await create_user(
-            'test.user@example.com', 'pAssw0rd'
+            'test.user@example.com', 'pAssw0rd', 'driver'
         )
         communicator = WebsocketCommunicator(
             application=application,
@@ -104,17 +135,7 @@ class TestWebSocket:
             'data': 'This is a test message.',
         }
         channel_layer = get_channel_layer()
-        await channel_layer.group_send('test', message=message)
+        await channel_layer.group_send('sepis_data_pool', message=message)
         response = await communicator.receive_json_from()
         assert response == message
-        await communicator.disconnect()
-
-    async def test_cannot_connect_to_socket(self, settings):
-        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
-        communicator = WebsocketCommunicator(
-            application=application,
-            path='/sepsisDynamic/'
-        )
-        connected, _ = await communicator.connect()
-        assert connected is False
         await communicator.disconnect()
