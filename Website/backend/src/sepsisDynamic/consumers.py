@@ -22,12 +22,18 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         """
         print("THE SCOPE is ====> \n", self.scope)
         user = self.scope['user']
+        print("\n the user in the consumer \n")
         print("THE USER IS ------>", user)
-        await self.channel_layer.group_add(
-            group='test',
-            channel=self.channel_name
-        )
-        await self.accept()
+        print("\n ---------------------- \n THE SCOPE of user is ====> \n",
+              self.scope['user'])
+        if user.is_anonymous:
+            await self.close()
+        else:
+            await self.channel_layer.group_add(
+                group='test',
+                channel=self.channel_name
+            )
+            await self.accept()
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(

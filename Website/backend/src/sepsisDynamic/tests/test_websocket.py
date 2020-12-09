@@ -1,6 +1,9 @@
 import pytest
 from channels.testing import WebsocketCommunicator
 from channels.layers import get_channel_layer
+from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
 
 from sepsisWebsite.routing import application
 
@@ -10,6 +13,20 @@ TEST_CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
+
+
+@database_sync_to_async
+def create_user(email, password, name="Ahamad"):
+    user = get_user_model().objects.create_user(
+        email=email,
+        name=name,
+        password=password
+    )
+
+    token, created = Token.objects.get_or_create(
+        user=user)
+    access = token  # Token.key #for_user(user)
+    return user, access
 
 
 @pytest.mark.asyncio
@@ -23,9 +40,12 @@ class TestWebSocket:
         function of Django-Channels to send a connection establishment request 
         """
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        _, access = await create_user(
+            'test.user@example.com', 'pAssw0rd'
+        )
         communicator = WebsocketCommunicator(
             application=application,
-            path='/sepsisDynamic/'
+            path=f'/sepsisDynamic/?token={access}'
         )
         connected, _ = await communicator.connect()
         assert connected is True
@@ -43,9 +63,12 @@ class TestWebSocket:
         `receive_json_from` inbuilt function of django-channels
         """
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        _, access = await create_user(
+            'test.user@example.com', 'pAssw0rd'
+        )
         communicator = WebsocketCommunicator(
             application=application,
-            path='/sepsisDynamic/'
+            path=f'/sepsisDynamic/?token={access}'
         )
         connected, _ = await communicator.connect()
         message = {
@@ -68,9 +91,12 @@ class TestWebSocket:
         broadcasted data; this is very similar to upper test.
         """
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        _, access = await create_user(
+            'test.user@example.com', 'pAssw0rd'
+        )
         communicator = WebsocketCommunicator(
             application=application,
-            path='/sepsisDynamic/'
+            path=f'/sepsisDynamic/?token={access}'
         )
         connected, _ = await communicator.connect()
         message = {
