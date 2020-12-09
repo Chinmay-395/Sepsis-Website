@@ -21,6 +21,8 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             all channels in that room will receive that message.
         """
         print("THE SCOPE is ====> \n", self.scope)
+        user = self.scope['user']
+        print("THE USER IS ------>", user)
         await self.channel_layer.group_add(
             group='test',
             channel=self.channel_name
