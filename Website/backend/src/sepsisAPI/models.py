@@ -15,6 +15,19 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
+    NO_SEPSIS = 'NO_SEPSIS'
+    SEPSIS_PREDICTED = 'SEPSIS_PREDICTED'
+    SEVERE_SEPSIS = 'SEVERE_SEPSIS'
+    SEPTIC_SHOCK = 'SEPTIC_SHOCK'
+    CURED = 'CURED'
+    SEPSIS_STATUS = (
+        (NO_SEPSIS, NO_SEPSIS),
+        (SEPSIS_PREDICTED, SEPSIS_PREDICTED),
+        (SEVERE_SEPSIS, SEVERE_SEPSIS),
+        (SEPTIC_SHOCK, SEPTIC_SHOCK),
+        (CURED, CURED),
+    )
+
     pat = models.ForeignKey(
         UserProfile, null=True, blank=True, on_delete=models.CASCADE)
     age = models.PositiveIntegerField(blank=True, null=True)
@@ -27,6 +40,9 @@ class Patient(models.Model):
     address = models.TextField(null=True, blank=True)
     doctor = models.ForeignKey(
         Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+
+    status = models.CharField(
+        max_length=20, choices=SEPSIS_STATUS, default=NO_SEPSIS)
 
     def __str__(self):
         return f'{self.pat.name}'

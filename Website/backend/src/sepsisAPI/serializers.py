@@ -14,7 +14,7 @@ class PatientSerializer(ModelSerializer):
 
     class Meta:
         model = Patient
-        fields = ['id', 'pat', 'doctor', 'sep_data']
+        fields = ['id', 'pat', 'doctor', 'status', 'sep_data']
         # depth = 2
 
     def get_pat(self, obj):
@@ -106,7 +106,8 @@ class SepsisPatientSerializer(ModelSerializer):
 
     class Meta:
         model = SepsisOfPatient
-        fields = ["heart_rate", "oxy_saturation", "temperature",
+        fields = ["id", "heart_rate", "oxy_saturation", "temperature",
                   "blood_pressure", "resp_rate", "mean_art_pre",
                   "patient",
                   ]  # "__all__"
+        read_only_fields = ['id']
