@@ -10,6 +10,8 @@
                 (1)Initialize the postgres docker:
                     docker run --name sep-postgres -p 5432:5432 \
                      -e POSTGRES_USER=sepsis -e POSTGRES_DB=sepsis -e POSTGRES_PASSWORD=taxi -d postgres
+                     1.1)Initialize the redis docker
+                     docker run --name sep-redis -p 6379:6379 -d redis
                 (2)start both the docker for postgres and redis
                     docker restart sep-postgres sep-redis
                 (3)Configure the database variables in the command line
@@ -38,3 +40,5 @@ Gender, age, heart rate,O2Sat, temperature,blood pressure, respiration rate,mean
 
     ###### To call the patient
         127.0.0.1:8000/patspat/<pat_id>
+
+user = get_user_model().objects.create_user('test.user@example.com', 'test_username', 'pa$$w0rd', 'PATIENT')

@@ -39,18 +39,14 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         x = x.patient_set.values('id')[0]['id']
 
         print("THE PATIENT's ID", x)
-        # lEts get the user-id of the person which should be converted to the user_patient_id
-        # user_id_val = data['patient']
-        # print("THE USER id", user_id_val)
-        # user_patient_id_val = _get_user_user_type_id(data['user_obj'])
-        # data = data.update({'patient': user_patient_id_val})
+
         print("THE TYPE OF DATA", type(data))
         data.update({'patient': x})
         print("THE NEW DATA", data)
         serializer = SepsisPatientSerializer(data=data)
-        print("THE SERIALIZER", serializer)
         serializer.is_valid(raise_exception=True)
-        return serializer.create(serializer.validated_data)
+        x = serializer.create(serializer.validated_data)
+        return SepsisPatientSerializer(x).data
 
     async def connect(self):
         """[summary]
