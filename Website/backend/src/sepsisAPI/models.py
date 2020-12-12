@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+import uuid
+
 from profiles_api.models import UserProfile
 # Create your models here.
 
@@ -40,7 +42,8 @@ class Patient(models.Model):
     address = models.TextField(null=True, blank=True)
     doctor = models.ForeignKey(
         Doctor, on_delete=models.SET_NULL, null=True, blank=True)
-
+    # This will
+    # grp_id = models.UUIDField(default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=20, choices=SEPSIS_STATUS, default=NO_SEPSIS)
 

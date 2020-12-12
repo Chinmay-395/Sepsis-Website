@@ -3,6 +3,8 @@ from sepsisAPI.serializers import SepsisPatientSerializer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 
+from sepsisAPI.models import Patient
+
 
 class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
 
@@ -22,17 +24,27 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         """
         print("THE USER obj", user.id)
         print("email", user.email)
-        if "PATIENT" == _get_user_group(user):
+        if "PATIENT" == self._get_user_group(user):
             print("THE PATIENT'S ID ", user.patient_set.values(
                 'pat_id'))
             return user.patient_set.values('id')
-        elif "DOCTOR" == _get_user_group(user):
+        elif "DOCTOR" == self._get_user_group(user):
             return user.doctor_set.values('id')
         else:
             print("THE USER IS SOMETHING ELSE")
 
     @database_sync_to_async
+    def _get_patient_of_doctor(self, user):
+        x = user.doctor_set.all()
+        doc_obj = x[0]
+        pat_ids = doc_obj.patient_set.all().values_list('id', flat=True)
+        return pat_ids
+
+    @database_sync_to_async
     def _created_sepsis_data(self, data):
+        """[summary]
+            This helper function would generate and return the 
+        """
         print("THE DATA SENT TO DATABASE CHECK USER ID", data)
         x = get_user_model().objects.get(id=data['patient'])
         print("THE USER", x)
@@ -81,11 +93,21 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             # ********************************************************************************************
             user_group = await self._get_user_group(user)
             if user_group == 'PATIENT':
+                user_type_id = await self._get_user_user_type_id(user)
                 await self.channel_layer.group_add(
-                    group='sepis_data_pool',
+                    group=user_type_id,
                     channel=self.channel_name
                 )
-                await self.accept()
+
+            elif user_group == 'DOCTOR':
+                # to check which patient is online
+                for pat_id in await self._get_patient_of_doctor(user):
+                    await self.channel_layer.group_add(
+                        group=pat_id,
+                        channel=self.channel_name
+                    )
+
+            await self.accept()
 
     async def start_sepsis(self, message):
         data = message.get('data')
@@ -102,8 +124,9 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         else:
             user_group = await self._get_user_group(user)
             if user_group == 'PATIENT':
+                user_type_id = await self._get_user_user_type_id(user)
                 await self.channel_layer.group_discard(
-                    group='sepis_data_pool',
+                    group=user_type_id,
                     channel=self.channel_name
                 )
                 await super().disconnect(code)
