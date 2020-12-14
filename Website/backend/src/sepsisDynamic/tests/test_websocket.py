@@ -169,14 +169,14 @@ class TestWebSocket:
         assert response_data['heart_rate'] == 55
         assert response_data['oxy_saturation'] == 26.5
         assert response_data['temperature'] == 50
-        assert response_data['patient'] == user.id
+
         await communicator.disconnect()
 
     async def test_patient_doctor_on_same_channel(self, settings):
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
         # create doctor
-        doctor_user, doctor_access = create_user(
-            'test_Doctor.user@example.com', 'pAssw0rd', 'DOCTOR', 'test_username'
+        doctor_user, doctor_access = await create_user(
+            'test_Doctor.user@example.com', 'pAssw0rd', 'DOCTOR', 'testDoctor_username'
         )
         # create patient
         user, access = await create_user(
@@ -189,48 +189,29 @@ class TestWebSocket:
         )
         connected, _ = await communicator.connect()
 
-        # start_sepsis (custom channel function)
-        await communicator.send_json_to({
-            'type': 'start.sepsis',
-            'data': {
-                "heart_rate": 55,
-                "oxy_saturation": 26.5,
-                "temperature": 50,
-                "blood_pressure": 95.48,
-                "resp_rate": 156,
-                "mean_art_pre": 85,
-                "patient": user.id,
-            },
-        })
-
-        response = await communicator.receive_json_from()
-        response_data = response.get('data')
-        assert response_data['id'] is not None
-        assert response_data['heart_rate'] == 55
-        assert response_data['oxy_saturation'] == 26.5
-        assert response_data['temperature'] == 50
-        assert response_data['patient'] == user.id
-
         # connect doctor
         doctor_communicator = WebsocketCommunicator(
             application=application,
             path=f'/sepsisDynamic/?token={doctor_access}'
         )
         # the doctor connects to the online patient
-        doctor_connected, _ = await communicator.connect()
+        doctor_connected, _ = await doctor_communicator.connect()
 
-        response = await doctor_connected.receive_json_from()
+        # Simply echo an message
+        message = {
+            'type': 'echo.message',
+            'data': 'This is a test message.'
+        }
 
-        assert response_data['heart_rate'] == 55
-        assert response_data['oxy_saturation'] == 26.5
-        assert response_data['temperature'] == 50
+        await communicator.send_json_to(message)
 
-        # await  communicator.send_json_to({
-        #     'type':"premature.sepsis", #step before running <start_sepsis> function
-        #     'data': {
+        # checking if patient received the data on their end
+        response = await communicator.receive_json_from()
+        assert response == message
 
-        #     }
-        # })
+        # checking if doctor received the patient's data on their end
+        response_doc = await doctor_communicator.receive_json_from()
+        response_doc == message
 
         await communicator.disconnect()
         await doctor_communicator.disconnect()

@@ -43,7 +43,7 @@ class Patient(models.Model):
     doctor = models.ForeignKey(
         Doctor, on_delete=models.SET_NULL, null=True, blank=True)
     # This will
-    # grp_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    grp_id = models.UUIDField(default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=20, choices=SEPSIS_STATUS, default=NO_SEPSIS)
 

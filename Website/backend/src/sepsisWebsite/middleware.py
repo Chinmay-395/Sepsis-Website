@@ -11,20 +11,20 @@ from rest_framework.authtoken.models import Token
 @database_sync_to_async
 def get_user(scope):
     close_old_connections()
-    print("THE NEW STUFF------------------------------------")
-    headers = dict(scope['headers'])
-    print("THE newER STUFF------------------------------------")
-    print("THE HEADER", headers)
+    # print("THE NEW STUFF------------------------------------")
+    # headers = dict(scope['headers'])
+    # print("THE newER STUFF------------------------------------")
+    # print("THE HEADER", headers)
     query_string = parse_qs(scope['query_string'].decode())
     token = query_string.get('token')
     if not token:
         return AnonymousUser()
     try:
         user = Token.objects.get(key=token[0])
-        print("THE USER is", user)
-        print("THE USER", user)
-        print("THE USERNAME", user.user)
-        print("THE USER email", user.user.email)
+        # print("THE USER is", user)
+        # print("THE USER", user)
+        # print("THE USERNAME", user.user)
+        # print("THE USER email", user.user.email)
     except Exception as exception:
         return AnonymousUser()
     if not user.user.is_active:
