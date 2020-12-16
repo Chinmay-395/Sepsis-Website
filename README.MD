@@ -42,3 +42,5 @@ Gender, age, heart rate,O2Sat, temperature,blood pressure, respiration rate,mean
         127.0.0.1:8000/patspat/<pat_id>
 
 user = get_user_model().objects.create_user('test.user@example.com', 'test_username', 'pa$$w0rd', 'PATIENT')
+
+sepsis_data_generating_on_loop
