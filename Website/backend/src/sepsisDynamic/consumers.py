@@ -2,20 +2,41 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from sepsisAPI.serializers import SepsisPatientSerializer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 
 from sepsisAPI.models import Patient
+import random
+import time
+import json
 
 
 class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
 
     groups = ['test']
 
-    # doc_pat_grp_id = ""
-    # pat_grp_id = ""
-
     @database_sync_to_async
-    def _get_user_group(self, user):
-        return user.user_type
+    async def _generate_sudo_sepsis_data(self, data):
+        data.update({'heart_rate': random.randint(24, 200)})
+        data.update({'oxy_saturation': random.randint(24, 200)})
+        data.update({'temperature': random.randint(24, 200)})
+        data.update({'blood_pressure': random.randint(24, 200)})
+        data.update({'resp_rate': random.randint(24, 200)})
+        data.update({'mean_art_pre': random.randint(24, 200)})
+
+        print("-------------", data)
+        # if (str(self.scope['user'].user_type) == 'PATIENT' and
+        #         self.scope['user'].patient_set.values('id')[0]['id'] == data['patient']):
+        print("KONICHUA")
+        serializer = SepsisPatientSerializer(data=data)
+        print("ALOHA")
+        print("THE SERIALIZER", serializer)
+        # x = await self._created_sepsis_data(data)
+        # print(x)
+        # print("Serialized Data------------------------> ", x)
+        # data = SepsisPatientSerializer(x).data
+        # print("THE DATA THAT WOULD BE SENT", data)
+        # data = x
+        return data
 
     @database_sync_to_async
     def _get_user_grp_id(self, user):
@@ -26,8 +47,6 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         if "PATIENT" == user.user_type:
             return str(user.patient_set.all()[0].grp_id)
         elif "DOCTOR" == user.user_type:
-            print("THE patient's unicode ", str(user.doctor_set.all()[
-                  0].patient_set.all().values_list('grp_id', flat=True)))
             return map(str, user.doctor_set.all()[0].patient_set.all().values_list('grp_id', flat=True))
         else:
             print("THE USER IS SOMETHING ELSE")
@@ -40,24 +59,52 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         return pat_ids
 
     @database_sync_to_async
-    def _created_sepsis_data(self, data):
-        """[summary]
-            This helper function would generate and return the 
-        """
-        print("THE DATA SENT TO DATABASE CHECK USER ID", data)
-        x = get_user_model().objects.get(id=data['patient'])
-        print("THE USER", x)
-        x = x.patient_set.values('id')[0]['id']
+    def _convert_user_id_to_patient_id(self, data):
+        print(
+            f"THE DATA is {data['patient']} AGAINST USER_ID {self.scope['user'].id}")
+        if (str(self.scope['user'].user_type) == 'PATIENT' and self.scope['user'].id == data['patient']):
+            x = get_user_model().objects.get(id=data['patient'])
+            x = x.patient_set.values('id')[0]['id']
+            data.update({'patient': x})
+            print("THE DATA AFTER THE USER_ID IS MATCHED WITH THE PATIENT", data)
+            return data
 
-        print("THE PATIENT's ID", x)
-
-        print("THE TYPE OF DATA", type(data))
-        data.update({'patient': x})
-        print("THE NEW DATA", data)
+    @database_sync_to_async
+    def serializer_checking_saving_data(self, data):
         serializer = SepsisPatientSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         x = serializer.create(serializer.validated_data)
         return SepsisPatientSerializer(x).data
+
+    @database_sync_to_async
+    def _created_sepsis_data(self, data):
+        """This helper function would generate and return the"""
+        print(f"THE DATA is {data} AGAINST USER_ID {self.scope['user'].id}")
+
+        """Once the user_id matches with user-id sent 
+            through the start_sepsis data we find the 
+            patient_id of that user(patient) and generate a
+            random values for the patient's sepsis data
+        """
+        for i in range(5):
+            time.sleep(2)
+            # convert the user_id to patient_id
+            print("THE DATA SENT TO DATABASE CHECK USER ID", data)
+            # x = get_user_model().objects.get(id=data['patient'])
+            # x = x.patient_set.values('id')[0]['id']
+            # data.update({'patient': x})
+            print("THE DATA AFTER THE USER_ID IS MATCHED WITH THE PATIENT", data)
+            # add psuedo sepsis data
+            data.update({'heart_rate': random.randint(24, 200)})
+            data.update({'oxy_saturation': random.randint(24, 200)})
+            data.update({'temperature': random.randint(24, 200)})
+            data.update({'blood_pressure': random.randint(24, 200)})
+            data.update({'resp_rate': random.randint(24, 200)})
+            data.update({'mean_art_pre': random.randint(24, 200)})
+            # serializing the data
+            print("THE DATA THAT NEEDS TO BE SAVED", data)
+
+            yield data  # SepsisPatientSerializer(x).data
 
     async def connect(self):
         """[summary]
@@ -74,23 +121,12 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             ◘ room is a group of channels. If anyone sends a message to the room, 
             all channels in that room will receive that message.
         """
-        # print("THE SCOPE is ====> \n", self.scope)
         user = self.scope['user']
-        # print("\n the user in the consumer \n")
-        print("THE USER IS ------>", user)
-        # print("THE USER IS ANONYMOUS ", user.is_anonymous)
 
         if user.is_anonymous:
             print("user was unknown")
             await self.close()
         else:
-            # ********************* the print statements for authenticated user **************************
-            # print("\n ---------------------- \n THE SCOPE of user is ====> \n",
-            #       self.scope['user'])
-            # print("THE USER GROUP", user.user_type)
-            # print("IS SUPERUSER", user.is_superuser)
-            # ********************************************************************************************
-            # user_group = await self._get_user_group(user)
             if user.user_type == 'PATIENT':
                 self.pat_grp_id = await self._get_user_grp_id(user)
                 await self.channel_layer.group_add(
@@ -101,7 +137,6 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
 
             elif user.user_type == 'DOCTOR':
                 # to check which patient is online
-                print("THE DOC CONDITION RAN")
                 for self.doc_pat_grp_id in await self._get_user_grp_id(user):
                     print("Doc connected --------->", self.doc_pat_grp_id)
                     await self.channel_layer.group_add(
@@ -111,20 +146,40 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
                 print("Doc connected ", self.doc_pat_grp_id)
             await self.accept()
 
+    @database_sync_to_async
+    def generate_save_sepsis_data(self, data):
+        for i in range(100):
+            # time.sleep(1)
+            # generate
+            pass
+
     async def start_sepsis(self, message):
         data = message.get('data')
-        sepsis_generated_and_saved_data = await self._created_sepsis_data(data)
-        await self.channel_layer.group_send(
-            group=self.pat_grp_id,
-            message={
-                'type': 'echo.message',
-                'data': sepsis_generated_and_saved_data
-            }
-        )
-        # await self.send_json({
-        #     'type': 'echo.group_message',
-        #     'data': sepsis_generated_and_saved_data
-        # })
+        print("THE DATA SENT BY PATIENT INITIALLY ---------------------> ", data)
+        # convert the user_id to patient_id
+        # ---------- converting user_id to patient_id
+        get_pat_id_in_data = await self._convert_user_id_to_patient_id(data)
+        print("THE val", get_pat_id_in_data)
+        #we have converted the user_id to patient_id#
+        data = get_pat_id_in_data
+        print(f"---------------------------\n {data} \n")
+        # Generate sudo_sepsis_data
+        # # while(True):
+        # generate_data = await self._generate_sudo_sepsis_data(data)
+        # print("THE GENERATED data is", generate_data)
+        # generated_and_saved_data = await self._created_sepsis_data(generate_data)
+        # print("THE GENERATED AND SAVED data is", generated_and_saved_data)
+        for generated_and_saved_data in await self._created_sepsis_data(data):
+            print("THE DATA THAT NEEDS TO BE SAVED ------->",
+                  generated_and_saved_data)
+            x = await self.serializer_checking_saving_data(generated_and_saved_data)
+            await self.channel_layer.group_send(
+                group=self.pat_grp_id,
+                message={
+                    'type': 'echo.message',
+                    'data': x
+                }
+            )
 
     async def disconnect(self, code):
         user = self.scope['user']
@@ -160,12 +215,13 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             )
         elif self.scope['user'].user_type == 'DOCTOR':
             print("THE doctor grp_id is", self.doc_pat_grp_id)
-            await self.channel_layer.group_send(group=self.doc_pat_grp_id,
-                                                message={
-                                                    'type': 'echo.message',
-                                                    'data': content
-                                                }
-                                                )
+            await self.channel_layer.group_send(
+                group=self.doc_pat_grp_id,
+                message={
+                    'type': 'echo.message',
+                    'data': content
+                }
+            )
 
     async def receive_json(self, content, **kwargs):
         print("THE RECEIVE FUNCTION RAN")

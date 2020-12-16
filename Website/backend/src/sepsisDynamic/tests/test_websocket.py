@@ -223,3 +223,73 @@ class TestWebSocket:
 
         await communicator.disconnect()
         await doctor_communicator.disconnect()
+
+    async def test_patient_doctor_on_same_channel_listening_sepsis_broadcast(self, settings):
+        settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
+        # create doctor
+        doctor_user, doctor_access = await create_user(
+            'test_Doctor.user@example.com', 'pAssw0rd', 'DOCTOR', 'testDoctor_username'
+        )
+        # create patient
+        user, access = await create_user(
+            'test.user@example.com', 'pAssw0rd', 'PATIENT', 'test_username'
+        )
+        # connect patient
+        communicator = WebsocketCommunicator(
+            application=application,
+            path=f'/sepsisDynamic/?token={access}'
+        )
+        connected, _ = await communicator.connect()
+
+        # connect doctor
+        doctor_communicator = WebsocketCommunicator(
+            application=application,
+            path=f'/sepsisDynamic/?token={doctor_access}'
+        )
+        # the doctor connects to the online patient
+        doctor_connected, _ = await doctor_communicator.connect()
+
+        # Simply echo an message
+        await communicator.send_json_to({
+            'type': 'start.sepsis',
+            'data': {
+                "heart_rate": 55,
+                "oxy_saturation": 26.5,
+                "temperature": 50,
+                "blood_pressure": 95.48,
+                "resp_rate": 156,
+                "mean_art_pre": 85,
+                "patient": user.id,
+            },
+        })
+
+        message_received = {
+            "type": "echo.message",
+            "data": {
+                "id": 27,
+                "heart_rate": 55.0,
+                "oxy_saturation": 26.5,
+                "temperature": 50.0,
+                "blood_pressure": 95.48,
+                "resp_rate": 156.0,
+                "mean_art_pre": 85.0,
+            }
+        }
+
+        # checking if patient received the data on their end
+        response = await communicator.receive_json_from()
+
+        assert response['data']['id'] is not None
+        assert response['data']['heart_rate'] == 55
+        assert response['data']['oxy_saturation'] == 26.5
+        assert response['data']['temperature'] == 50
+
+        # checking if doctor received the patient's data on their end
+        response_doc = await doctor_communicator.receive_json_from()
+        # assert response_doc['id'] is not None
+        assert response_doc['data']['heart_rate'] == 55
+        assert response_doc['data']['oxy_saturation'] == 26.5
+        assert response_doc['data']['temperature'] == 50
+
+        await communicator.disconnect()
+        await doctor_communicator.disconnect()
