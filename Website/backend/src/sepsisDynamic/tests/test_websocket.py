@@ -145,6 +145,10 @@ class TestWebSocket:
     #     await communicator.disconnect()
 
     async def test_send_patient_data_receive(self, settings):
+        """The reason why this test is failing is because
+            I am expecting a single output rather than a
+            continuous flow of output of patient data
+        """
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
         user, access = await create_user(
             'test.user@example.com', 'pAssw0rd', 'PATIENT', 'test_username'
@@ -225,6 +229,10 @@ class TestWebSocket:
         await doctor_communicator.disconnect()
 
     async def test_patient_doctor_on_same_channel_listening_sepsis_broadcast(self, settings):
+        """The reason why this test is failing is because
+            I am expecting a single output rather than a
+            continuous flow of output of patient data
+        """
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
         # create doctor
         doctor_user, doctor_access = await create_user(

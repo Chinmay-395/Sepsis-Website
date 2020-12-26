@@ -11,7 +11,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserProfile
-        fields = ('id', 'name', 'email', 'password', 'user_type')
+        fields = ('id', 'name', 'email', 'password', 'user_type', 'photo')
         extra_kwargs = {
             'password': {
                 'write_only': True,
@@ -31,12 +31,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
             email=validate_data['email'],
             name=validate_data['name'],
             password=validate_data['password'],
-            user_type=validate_data['user_type']
+            user_type=validate_data['user_type'],
+            photo=validate_data['photo']
         )
         return user
 
     def update(self, instance, validated_data):
         """Handle updating user account"""
+        print(f"\n The validated data {validated_data} \n")
         if 'password' in validated_data:
             password = validated_data.pop('password')
             instance.set_password(password)
@@ -49,7 +51,12 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = models.UserProfile
         fields = [
             'name',
-            'email'
+            'email',
+            'user_type',
+            'photo'
         ]
-        extra_kwargs = {'name': {'read_only': True},
-                        'email': {'read_only': True}}
+        extra_kwargs = {
+            'name': {'read_only': True},
+            'email': {'read_only': True},
+            'user_type': {'read_only': True}
+        }
