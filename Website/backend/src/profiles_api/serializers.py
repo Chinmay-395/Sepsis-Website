@@ -27,6 +27,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def create(self, validate_data):
         print("Validated data-----", validate_data)
+        # if validate_data['photo'] == None:
+        #     user = models.UserProfile.objects.create_user(
+        #         email=validate_data['email'],
+        #         name=validate_data['name'],
+        #         password=validate_data['password'],
+        #         user_type=validate_data['user_type'],
+        #     )
         user = models.UserProfile.objects.create_user(
             email=validate_data['email'],
             name=validate_data['name'],
@@ -50,13 +57,14 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserProfile
         fields = [
+            "id",
             'name',
             'email',
             'user_type',
             'photo'
         ]
-        extra_kwargs = {
-            'name': {'read_only': True},
-            'email': {'read_only': True},
-            'user_type': {'read_only': True}
-        }
+        # extra_kwargs = {
+        #     'name': {'read_only': True},
+        #     'email': {'read_only': True},
+        #     'user_type': {'read_only': True}
+        # }

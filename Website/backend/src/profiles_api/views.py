@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework import (status, viewsets)
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
@@ -21,7 +23,33 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',)
+
+    # def partial_update(self, request, pk=None):
+    #     user = self.request.UserProfile.objects.get(id=pk)
+    #     print(f"user {user}")
+
+    # def update(self, request, *args, **kwargs):
+    #     kwargs['partial'] = True
+    #     return super().update(request, *args, **kwargs)
     # renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+
+class UserProfilePartialUpdateView(GenericAPIView, UpdateModelMixin):
+    serializer_class = serializers.UserDetailSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnProfile,)
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    # def partial_update(self, request, pk=None):
+    #     serializer = serializers.UserDetailSerializer(
+    #         request.user, data=request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+
+    #     return Response(serializer.data)
 
 
 class UserLoginApiView(ObtainAuthToken):
