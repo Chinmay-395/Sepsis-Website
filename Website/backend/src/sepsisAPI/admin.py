@@ -12,7 +12,7 @@ class DoctorAdmin(admin.ModelAdmin):
 
 
 class PatientAdmin(admin.ModelAdmin):
-    fields = ['age', 'gender', 'status', ]  # 'doctor', #'pat',
+    fields = ['age', 'gender', 'status', 'doctor', ]  # 'pat',
     list_display = ['pat', 'age', 'grp_id', 'gender', 'doctor', 'id']
     list_filter = (
         'doctor',

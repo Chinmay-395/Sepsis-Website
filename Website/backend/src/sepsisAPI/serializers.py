@@ -15,6 +15,7 @@ class PatientSerializer(ModelSerializer):
     class Meta:
         model = Patient
         fields = ['id', 'pat', 'doctor', 'status', 'sep_data']
+        extra_kwargs = {'id': {'read_only': True}}
         # depth = 2
 
     def get_pat(self, obj):
@@ -49,6 +50,7 @@ class DoctorSerializer(ModelSerializer):
 
         fields = ['id', 'doc_name',  # 'patient_set', 'patient_set_name',
                   'doctor', 'each_pat_json']
+        read_only_fields = ['id']
 
     def get_doctor(self, obj):
         print("doctor's id ->>>>>>>>>>>>", str(obj.id))
