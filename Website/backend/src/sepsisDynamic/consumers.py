@@ -160,20 +160,41 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
     """[asynchronous method of sending the data]
     This is a new methodology of implementing the same concept
     """
-    async def create_and_save_sepsis_data(self, data):
-        pass
-
-    # new sepsis
-    async def generating_patient_sepsis(self, message):
+    async def broadcast_save_sepsis_data(self, message):
         # get the data from message
         data = message.get('data')
         print(f"THE INITIAL DATA {data}")
         # get the patient's id
         get_pat_id_in_data = await self._convert_user_id_to_patient_id(data)
         data = get_pat_id_in_data
+        await self.channel_layer.group_send(
+            group=self.pat_grp_id,
+            message={
+                # 'type': 'echo.group_message',
+                # 'type': 'echo.message',
+                'type': 'generating.patient_sepsis',
+                'data': data
+            }
+        )
+
+    # new sepsis
+    async def generating_patient_sepsis(self, data):
+        # get the data from message
+        #### data = message.get('data')
+        #### print(f"THE INITIAL DATA {data}")
+        # get the patient's id
+        # get_pat_id_in_data = await self._convert_user_id_to_patient_id(data)
+        #### data = get_pat_id_in_data
+        print(
+            f"THE DATA FROM broadcast_save_sepsis_data function \n {data} \n")
+        print(f"{data.get('data')}")
+        data = data.get('data')
+        i = 1
         while True:
-            time.sleep(5)
-            await asyncio.sleep(1)
+            # for i in range(1, 7):
+            print(f'RAN FOR ------------ {i}')
+
+            await asyncio.sleep(3)
             # random sepsis data generated and `data` variable is mutated
             data.update({'heart_rate': random.randint(24, 200)})
             data.update({'oxy_saturation': random.randint(24, 200)})
@@ -184,15 +205,13 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             print(f"THE DATA  --> {data}")
             # serializing and saving the data
             x = await self.serializer_checking_saving_data(data)
-            # send the data to the channel
-            await self.channel_layer.group_send(
-                group=self.pat_grp_id,
-                message={
-                    'type': 'echo.message',
-                    'data': x
-                }
-            )
+            print(f"THE DATA THAT BROADCASTED {x}")
+            await self.send_json(x)
+            print("\n \n")
+            i += 1
+            asyncio.sleep(3)
 
+    #----------------------------------------------------------------#
     """[The code after this is same for both implementation]
     """
     async def disconnect(self, code):
@@ -210,32 +229,8 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
 
     async def echo_message(self, message):
         print("THE ECHO MESSAGE ALSO RAN")
+        print(f"THE SELF {self}")
         await self.send_json(message)
-
-    async def echo_group_message(self, message):
-        print("THE MESSAGE", message)
-        print("THE USER THAT CALLED the echo-group-function is",
-              self.scope['user'])
-        content = message.get('data')
-        print("THE CONTENTS ARE ", content)
-        if self.scope['user'].user_type == 'PATIENT':
-            print("THE patient grp_id is", self.pat_grp_id)
-            await self.channel_layer.group_send(
-                group=self.pat_grp_id,
-                message={
-                    "type": "echo.message",
-                    "data": message.get('data')
-                }
-            )
-        elif self.scope['user'].user_type == 'DOCTOR':
-            print("THE doctor grp_id is", self.doc_pat_grp_id)
-            await self.channel_layer.group_send(
-                group=self.doc_pat_grp_id,
-                message={
-                    'type': 'echo.message',
-                    'data': content
-                }
-            )
 
     async def receive_json(self, content, **kwargs):
         print("THE RECEIVE FUNCTION RAN")
@@ -245,7 +240,8 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             await self.start_sepsis(content)
         # this is for new sepsis method
         if message_type == 'generate.sepsis':
-            await self.generating_patient_sepsis(content)
+            await self.broadcast_save_sepsis_data(content)
+            # await self.generating_patient_sepsis(content)
         ####################################
         if message_type == 'echo.message':
             await self.send_json({
