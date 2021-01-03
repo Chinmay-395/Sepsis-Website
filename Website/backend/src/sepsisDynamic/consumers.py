@@ -16,20 +16,6 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
 
     groups = ['test']
 
-    # We Dont even need this code thereby can be deleted
-    @database_sync_to_async
-    async def _generate_sudo_sepsis_data(self, data):
-        data.update({'heart_rate': random.randint(24, 200)})
-        data.update({'oxy_saturation': random.randint(24, 200)})
-        data.update({'temperature': random.randint(24, 200)})
-        data.update({'blood_pressure': random.randint(24, 200)})
-        data.update({'resp_rate': random.randint(24, 200)})
-        data.update({'mean_art_pre': random.randint(24, 200)})
-        print("-------------", data)
-        serializer = SepsisPatientSerializer(data=data)
-        print("THE SERIALIZER", serializer)
-        return data
-
     @database_sync_to_async
     def _get_user_grp_id(self, user):
         """This will return grp_id since django channels' channel-layer requires ASCII unicode as group"""
@@ -52,47 +38,24 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def _convert_user_id_to_patient_id(self, data):
-        # print(
-        #     f"THE DATA is {data['patient']} AGAINST USER_ID {self.scope['user'].id}")
         if (str(self.scope['user'].user_type) == 'PATIENT' and self.scope['user'].id == data['patient']):
             x = get_user_model().objects.get(id=data['patient'])
             x = x.patient_set.values('id')[0]['id']
             data.update({'patient': x})
-            # print("THE DATA AFTER THE USER_ID IS MATCHED WITH THE PATIENT", data)
             return data
 
+    # the following code is important
     @database_sync_to_async
     def serializer_checking_saving_data(self, data):
         serializer = SepsisPatientSerializer(data=data)
         serializer.is_valid(raise_exception=True)
+
         x = serializer.create(serializer.validated_data)
+        serializer.save()
         return SepsisPatientSerializer(x).data
 
-    # REMOVE THE BELOW CODE; NO MORE NEEDED
-    @database_sync_to_async
-    def _created_sepsis_data(self, data):
-        """This helper function would generate and return the"""
-        print(f"THE DATA is {data} AGAINST USER_ID {self.scope['user'].id}")
-
-        """Once the user_id matches with user-id sent 
-            through the start_sepsis data we find the 
-            patient_id of that user(patient) and generate a
-            random values for the patient's sepsis data
-        """
-        for i in range(10):
-            print(f"THE LOOP NUMBER {i}")
-            data.update({'heart_rate': random.randint(24, 200)})
-            data.update({'oxy_saturation': random.randint(24, 200)})
-            data.update({'temperature': random.randint(24, 200)})
-            data.update({'blood_pressure': random.randint(24, 200)})
-            data.update({'resp_rate': random.randint(24, 200)})
-            data.update({'mean_art_pre': random.randint(24, 200)})
-            # serializing the data
-            # print("THE DATA THAT NEEDS TO BE SAVED", data)
-            yield data
-
     async def connect(self):
-        """[summary]
+        """
         • [Understanding of django-channels groups methodology]
             ◘ self.channel_layer.group_add("gossip", self.channel_name) takes
             two arguments: room_name and channel_name
@@ -107,7 +70,6 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
             all channels in that room will receive that message.
         """
         user = self.scope['user']
-
         if user.is_anonymous:
             print("user was unknown")
             await self.close()
@@ -134,113 +96,37 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
                 print(
                     f"THE CHANNEL NAME for doctor ---------> {self.channel_name}")
                 print("DOCTOR GROUP NAME --------->", self.doc_pat_grp_id)
+            elif user.is_superuser:
+                """I will keep the grp_id constant in this case
+                shikamaru's the patient and his grp_id = "2281980b-dd5a-4f27-9e66-83b7fcc9dc99"
+                """
+                grp_id = "2281980b-dd5a-4f27-9e66-83b7fcc9dc99"
+                await self.channel_layer.group_add(
+                    group=f"{grp_id}",
+                    channel=self.channel_name
+                )
+                print(f"HEY LO {user}")
+                print(f"Hospital also connected {grp_id}")
+
             await self.accept()
-
-    # GET RID OF BELOW CODE WHICH IS COMMENTED!
-    # @database_sync_to_async
-    # def generate_save_sepsis_data(self, data):
-    # for i in range(100):
-    # time.sleep(1)
-    # generate
-    # pass
-
-    async def start_sepsis(self, message):
-        data = message.get('data')
-        """ The data we got here was with user_id we need to convert it into patient_id """
-        print("THE DATA SENT BY PATIENT INITIALLY ---------------------> ", data)
-        get_pat_id_in_data = await self._convert_user_id_to_patient_id(data)
-        """we have converted the user_id to patient_id"""
-        data = get_pat_id_in_data
-        # print(f"\n the converted data is ------> {data} \n")
-        for generated_and_saved_data in await self._created_sepsis_data(data):
-            # print("THE DATA THAT NEEDS TO BE SAVED ------->",
-            #       generated_and_saved_data)
-            """Above we generated a new sepsis data that needs to be serialized and saved into database"""
-            x = await self.serializer_checking_saving_data(generated_and_saved_data)
-
-            await self.channel_layer.group_send(
-                group=self.pat_grp_id,
-                message={
-                    'type': 'echo.group_message',
-                    'data': x
-                }
-            )
-            # await self.broadcast_start_sepsis_data(x)
-            print(f"THE SELF ---> {self.scope['user']}")
-            await asyncio.sleep(3)
-
-    # async def broadcast_start_sepsis_data(self, data):
-    #     await self.channel_layer.group_send(
-    #         group=self.pat_grp_id,
-    #         message={
-    #             'type': 'echo.message',
-    #             'data': data
-    #         }
-    #     )
 
     """[asynchronous method of sending the data]
     This is a new methodology of implementing the same concept
     """
-    async def broadcast_save_sepsis_data(self, message):
-        """ In this the patient's websocket request to start diagnosis 
-        """
-        # get the data from message
-        data = message.get('data')
-        print(f"THE INITIAL DATA {data}")
-        # get the patient's id
-        get_pat_id_in_data = await self._convert_user_id_to_patient_id(data)
-        data = get_pat_id_in_data
-        print(f"The patient's grp-id {self.pat_grp_id}")
-        ##################################
+
+    # ++++++++++++++++++++++++++++++++++ NEW IMPLEMENTATION ++++++++++++++++++++++++++++++++++
+    # the below code is important
+    async def broadcast_start_sepsis_data(self, data):
+        """This broadcast function will only be allowed to the superuser(ie Hospital)"""
+        grp_id = "2281980b-dd5a-4f27-9e66-83b7fcc9dc99"
+        await self.serializer_checking_saving_data(data)
         await self.channel_layer.group_send(
-            group=self.pat_grp_id,
+            group=grp_id,
             message={
-                # 'type': 'echo.group_message',
-                # 'type': 'echo.message',
-                'type': 'generating.patient_sepsis',
+                'type': 'echo.message',
                 'data': data
             }
         )
-        print(
-            f"WHO DOES SELF REFERS TO in broadcast_func \t {self.scope['user']} \n")
-
-    # new sepsis
-    async def generating_patient_sepsis(self, data):
-        print(
-            f"THE DATA FROM broadcast_save_sepsis_data function \n {data} \n")
-        # print(f"{data.get('data')}")
-        data = data.get('data')
-        i = 1
-        while i <= 5:  # True
-            # for i in range(1, 7):
-            print(f'RAN FOR ------------ {i}')
-            print(f"WHO DOES SELF REFERS TO {self.scope['user']}")
-            await asyncio.sleep(3)
-            # random sepsis data generated and `data` variable is mutated
-            data.update({'heart_rate': random.randint(24, 200)})
-            data.update({'oxy_saturation': random.randint(24, 200)})
-            data.update({'temperature': random.randint(24, 200)})
-            data.update({'blood_pressure': random.randint(24, 200)})
-            data.update({'resp_rate': random.randint(24, 200)})
-            data.update({'mean_art_pre': random.randint(24, 200)})
-            # print(f"THE DATA  --> {data}")
-            # serializing and saving the data
-            x = await self.serializer_checking_saving_data(data)
-            print(f"THE DATA THAT BROADCASTED \n {x}")
-            print(f'THE SELF \t {self}')
-            ############################
-            # await self.send_json(x)
-            await self.channel_layer.group_send(
-                group=self.room_group_name,  # self.pat_grp_id
-                message={
-                    'type': 'echo.group_message',
-                    'data': x
-                }
-            )
-            ############################
-
-            print("\n \n")
-            i += 1
 
     #----------------------------------------------------------------#
     """[The code after this is same for both implementation]
@@ -261,49 +147,8 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
     async def echo_message(self, message):
         print("THE ECHO MESSAGE ALSO RAN")
         print(f"THE SELF {self.channel_name} {self.scope['user']}")
-
+        print(f"THE MESSAGE {message}")
         await self.send_json(message.get('data'))
-
-    # THE BELOW CODE IS IMP
-    async def echo_group_message(self, message):
-        print(f"THE ECHO-GROUP-MESSAGE ran with the message \n {message}")
-        print(f"THE SELF {self.scope['user']}")
-        # await self.send_json(message)
-        #############################################################################
-        # the below code works
-        #############################################################################
-        if self.scope['user'].user_type == 'PATIENT':
-            print(
-                f" **********************THE PATIENT IN GROUP_MESSAGE RAN********************** {self.scope['user']}")
-            await self.channel_layer.group_send(
-                group=self.pat_grp_id,
-                message={
-                    # 'type': 'echo.group_message',
-                    # 'type': 'echo.message',
-                    'type': 'echo.message',
-                    'data': message
-                }
-            )
-            # await self.send({
-            #     'type':'websocket.send',
-            #     'message':message
-            #     })
-            # await self.send_json(message)
-        elif self.scope['user'].user_type == 'DOCTOR':
-            print(
-                f" **********************THE DOCTOR IN GROUP_MESSAGE RAN********************** {self.scope['user']}")
-            await self.channel_layer.group_send(
-                group=self.doc_pat_grp_id,
-                message={
-                    # 'type': 'echo.group_message',
-                    # 'type': 'echo.message',
-                    'type': 'echo.message',
-                    'data': message
-                }
-            )
-        else:
-            print(
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx NULL xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 
     async def receive_json(self, content, **kwargs):
         """[summary]
@@ -314,19 +159,9 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
         print("THE RECEIVE FUNCTION RAN")
         message_type = content.get('type')
         print("THE MESSAGE TYPE", message_type)
-        if message_type == 'start.sepsis':
-            await self.start_sepsis(content)
-        # this is for new sepsis method
-        if message_type == 'generate.sepsis':
-            await self.broadcast_save_sepsis_data(content)
-            # await self.generating_patient_sepsis(content)
-        ####################################
-        # if message_type == 'echo.message':
-        #     """ """
-        #     await self.send_json({
-        #         'type': message_type,
-        #         'data': content.get('data'),
-        #     })
-        if message_type == 'echo.group_message':
-            print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-            await self.echo_group_message(content)
+        if message_type == 'echo.message':
+            await self.echo_message(content)
+
+        if message_type == 'broadcast.start_sepsis_data':
+            print("THE EVENT BROADCAST=====================")
+            await self.broadcast_start_sepsis_data(content.get('data'))

@@ -1,5 +1,10 @@
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.core import serializers
+
 import uuid
 
 from profiles_api.models import UserProfile
@@ -142,3 +147,25 @@ def create_patient_schemas(sender, instance, created, **kwargs):
     tables for sepsis tracking.
 """
 post_save.connect(create_patient_schemas, sender=Patient)
+
+
+def broadcast_patient_sepsis_to_the_group(sender, instance, created, **kwargs):
+    if created:
+        channel_layer = get_channel_layer()
+        pat = instance.patient
+        pat_grp_id = str(pat.grp_id)
+        serialized_obj = serializers.serialize('json', [instance, ])
+        jsonified_sepsis_data = eval(serialized_obj)[0]['fields']
+        instance.save()
+        print(f"THE SEPSIS DATA SAVED IS \n {jsonified_sepsis_data}")
+        async_to_sync(channel_layer.group_send)(
+            pat_grp_id,
+            {
+                "type": 'echo.message',
+                "data": jsonified_sepsis_data
+            }
+        )
+
+
+# post_save.connect(broadcast_patient_sepsis_to_the_group,
+#                   sender=SepsisOfPatient)
