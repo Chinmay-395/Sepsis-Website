@@ -8,11 +8,11 @@ import { Jumbotron, Button } from "reactstrap";
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
-class PatHomePage extends React.Component {
-  render() {
-    // console.log("NEW PROPS", this.props);
+function PatHomePage(props) {
+  // render() {
+    // console.log("NEW PROPS", props);
 
-    if (this.props.patient_data.isLoading) {
+    if (props.patient_data.isLoading) {
       console.log("I ran");
       return (
         <div className="container">
@@ -38,7 +38,7 @@ class PatHomePage extends React.Component {
             </p>
             <p className="lead">
               <Button color="link">
-                <Link to={`/stats/${this.props.auth.token.user_type_id}`}>
+                <Link to={`/stats/${props.auth.token.user_type_id}`}>
                   Check Stats
                 </Link>
               </Button>
@@ -48,7 +48,7 @@ class PatHomePage extends React.Component {
       );
     }
   }
-}
+// }
 
 const mapStateToProps = (state) => {
   console.log("THE STATE HAS SHIT", state);

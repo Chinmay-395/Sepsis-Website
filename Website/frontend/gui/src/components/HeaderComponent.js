@@ -14,8 +14,8 @@ import { logout } from "../redux/ActionCreator";
 
 const links = [
   { key: "1", href: "/home", text: "Home" },
-  { key: "2", href: "#card", text: "Profile" },
-  { key: "3", href: "#about", text: "Monitoring" },
+  { key: "2", href: "/stats", text: "stats" },
+  { key: "3", href: "/monitor", text:"Monitoring" },
   { key: "4", href: "/login", text: "LOGIN" },
 ];
 
@@ -38,26 +38,46 @@ class Header extends Component {
       isOpen: !this.state.isOpen,
     });
   }
-  createNavItem = ({ href, text, className, key }) => {
+  createNavItem = ({ href, text, key }) => {
     if (this.props.auth.token !== null) {
       // console.log("the email", localStorage.getItem('email'))
       // console.log("The text", text)
       if (text === "LOGIN") {
         return (
-          <>
-            <NavItem key={key}>
+          <React.Fragment key={key}>
+            <NavItem >
               <NavLink href="#">{localStorage.getItem("email")}</NavLink>
             </NavItem>
             <button onClick={() => this.logoutbutton()}>Logout</button>
-            {/* <NavItem key={key + 1}>
-              <NavLink href="#">Logout</NavLink>
-            </NavItem> */}
-          </>
+          </React.Fragment>
+          
         );
-      } else {
+      }else if(text==="Monitoring"){
+        // href = `${href}${}`
+        var new_href = `${href}/${localStorage.getItem("user_type_id")}/`
+        console.log("Href of stats",href,new_href)
+        return (
+          
+            <NavItem key={key}>
+              <NavLink href={new_href}>{text}</NavLink>
+            </NavItem>
+          
+        );
+      }else if(text==="stats"){
+        var new_href = `${href}/${localStorage.getItem("user_type_id")}/`
+        console.log("Href",href,new_href)
+        return (
+          
+            <NavItem key={key}>
+              <NavLink href={new_href}>{text}</NavLink>
+            </NavItem>
+          
+        );
+      }
+      else {
         return (
           <NavItem key={key}>
-            <NavLink href={href} className={className}>
+            <NavLink href={href}>
               {text}
             </NavLink>
           </NavItem>
@@ -66,7 +86,7 @@ class Header extends Component {
     } else {
       return (
         <NavItem key={key}>
-          <NavLink href={href} className={className}>
+          <NavLink href={href}>
             {text}
           </NavLink>
         </NavItem>
@@ -101,3 +121,30 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
+
+
+// className={className}
+// const linkFunc = () => (
+//   <>
+//   <NavItem>
+//     <NavLink href="/home" >
+//       Home
+//     </NavLink>
+//   </NavItem>
+//   <NavItem>
+//     <NavLink href="/home" >
+//       Home
+//     </NavLink>
+//   </NavItem>
+//   <NavItem>
+//     <NavLink href="/home" >
+//       Home
+//     </NavLink>
+//   </NavItem>
+//   <NavItem>
+//     <NavLink href="/home" >
+//       Home
+//     </NavLink>
+//   </NavItem>
+//   </>
+// )

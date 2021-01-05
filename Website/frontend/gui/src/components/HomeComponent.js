@@ -1,49 +1,68 @@
-import React, { Component } from "react";
+import React, {useEffect} from "react";
 // import { Redirect, Link } from 'react-router-dom'
 // import { Link, withRouter } from 'react-router'
+import { Jumbotron, Button } from "reactstrap";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-
+import {fetchPatData} from "../redux/ActionCreator";
 import PatHomePage from "./pat_Components/PatHomePage";
 import HomePage from "./doc_Components/HomePage";
 
-class Home extends Component {
-  componentDidMount() {
-    console.log("PROPS FOM general-Home-component", this.props);
-  }
-  render() {
-    // console.log("THE USER IS A", localStorage.getItem("user_type"));
-    if (this.props.auth.token !== null) {
-      if (this.props.auth.token.user_type === "DOCTOR") {
-        return (
-          <div>
-            <HomePage />
-          </div>
-        );
-      } else if (this.props.auth.token.user_type === "PATIENT") {
-        return <PatHomePage />;
-      } else {
-        return (
-          <div>
-            <h1>You aren't suppose to be here</h1>
-          </div>
-        );
-      }
-    } else {
-      return (
-        <div>
-          <h1>You aren't Authenticated</h1>
-        </div>
-      );
-    }
-  }
+const get_user_type_id = localStorage.getItem('user_type_id');
+const get_type = localStorage.getItem('user_type');
+
+const Home =(props)=> {
+  console.log("THE PROPS",props)
+  
+  // useEffect(()=>{
+  //   console.log("THE PROPS IN useEffectHOOK",props)
+  //   return () =>{
+  //     props.fetchPatData(get_user_type_id)
+  //   }
+    
+  // },[props]);
+  
+
+  console.log(props)
+
+  
+  return(
+    <>
+      <Jumbotron>
+        <h1 className="display-3">Welcome {get_type}</h1>
+        <p className="lead">
+          This is a simple hero unit, a simple Jumbotron-style component for
+          calling extra attention to featured content or information.
+        </p>
+        <hr className="my-2" />
+        <p>
+          It uses utility classes for typography and spacing to space
+          content out within the larger container.
+        </p>
+        <p className="lead">
+          <Button color="link">
+            <Link to={`/stats/${get_user_type_id}`}>
+              Check Stats
+            </Link>
+          </Button>
+        </p>
+      </Jumbotron>
+      {/* JSON.stringify */}
+      {console.log("THE PROPS IN PATIENT",(props.patient.pat_data.sep_data))}
+      
+            
+      </>
+  )
 }
+  
 
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
+    patient:state.pat_data,
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  // fetchDocData: () => dispatch(fetchDocData()),
+  fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
