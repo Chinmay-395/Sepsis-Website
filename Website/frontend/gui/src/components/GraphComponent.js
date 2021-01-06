@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
 import { fetchPatData } from "../redux/ActionCreator";

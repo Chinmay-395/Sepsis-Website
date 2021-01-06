@@ -29,15 +29,14 @@ function Main(props) {
           <Header />
           <Switch>
             <Route path="/home" component={Home} />
-            {/* {(get_type==="PATIENT")?(<Route path="/stats/:pat_id" component={PatWithId} />): */}
-            
             <Route path="/stats/:pat_id" component={Graphvisulation} />
             <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
+            {/* If needed we can also make a table of the data of patient */}
             <Redirect to="/home" />
           </Switch>
         </div>
       )
-      :<Route path="/login" component={() => <AuthenticationComponent />} />}
+      :<Route path="/login" component={AuthenticationComponent} />}
     </>
   )
 }

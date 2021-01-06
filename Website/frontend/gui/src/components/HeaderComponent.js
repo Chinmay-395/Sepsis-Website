@@ -40,8 +40,8 @@ class Header extends Component {
   }
   createNavItem = ({ href, text, key }) => {
     if (this.props.auth.token !== null) {
-      // console.log("the email", localStorage.getItem('email'))
-      // console.log("The text", text)
+      console.log("the email", localStorage.getItem('email'))
+      console.log("The text", text)
       if (text === "LOGIN") {
         return (
           <React.Fragment key={key}>
@@ -55,7 +55,7 @@ class Header extends Component {
       }else if(text==="Monitoring"){
         // href = `${href}${}`
         var new_href = `${href}/${localStorage.getItem("user_type_id")}/`
-        console.log("Href of stats",href,new_href)
+        // console.log("Href of stats",href,new_href)
         return (
           
             <NavItem key={key}>
@@ -64,12 +64,12 @@ class Header extends Component {
           
         );
       }else if(text==="stats"){
-        var new_href = `${href}/${localStorage.getItem("user_type_id")}/`
-        console.log("Href",href,new_href)
+        var diff_href = `${href}/${localStorage.getItem("user_type_id")}/`
+        // console.log("Href",href,new_href)
         return (
           
             <NavItem key={key}>
-              <NavLink href={new_href}>{text}</NavLink>
+              <NavLink href={diff_href}>{text}</NavLink>
             </NavItem>
           
         );
@@ -94,7 +94,7 @@ class Header extends Component {
     }
   };
   render() {
-    // console.log("props in header is>>>", this.props)
+    console.log("props in header is>>>", this.props)
     return (
       <div>
         <Navbar color="light" light expand="md">

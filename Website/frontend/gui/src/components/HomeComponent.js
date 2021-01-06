@@ -1,29 +1,21 @@
-import React, {useEffect} from "react";
+import React from "react";
 // import { Redirect, Link } from 'react-router-dom'
 // import { Link, withRouter } from 'react-router'
 import { Jumbotron, Button } from "reactstrap";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import {fetchPatData} from "../redux/ActionCreator";
+
 import PatHomePage from "./pat_Components/PatHomePage";
 import HomePage from "./doc_Components/HomePage";
 
 const get_user_type_id = localStorage.getItem('user_type_id');
 const get_type = localStorage.getItem('user_type');
 
+
 const Home =(props)=> {
   console.log("THE PROPS",props)
-  
-  // useEffect(()=>{
-  //   console.log("THE PROPS IN useEffectHOOK",props)
-  //   return () =>{
-  //     props.fetchPatData(get_user_type_id)
-  //   }
-    
-  // },[props]);
-  
-
   console.log(props)
+  
 
   
   return(
@@ -47,8 +39,10 @@ const Home =(props)=> {
           </Button>
         </p>
       </Jumbotron>
+      {get_user_type_id!==null && get_type==="PATIENT"?(<PatHomePage/>):<></>}
+      {get_user_type_id!==null && get_type==="DOCTOR"?(<HomePage/>):<></>}
       {/* JSON.stringify */}
-      {console.log("THE PROPS IN PATIENT",(props.patient.pat_data.sep_data))}
+      {console.log("THE PROPS IN PATIENT",props)}
       
             
       </>
@@ -59,10 +53,10 @@ const Home =(props)=> {
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    patient:state.pat_data,
+    // patient:state.pat_data,
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
+  // fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

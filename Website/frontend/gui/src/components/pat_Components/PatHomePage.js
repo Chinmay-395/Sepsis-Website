@@ -1,63 +1,78 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { connect } from "react-redux";
-import { Icon, Spin } from "antd";
-import { Link } from "react-router-dom";
-import { Jumbotron, Button } from "reactstrap";
-//custom imports
-// import { fetchDocData } from "../../redux/ActionCreator";
+//reactStrap
+import { Table } from "reactstrap";
+//components import
+import LoadingComponent from "../LoadingComponent"
+//redux imports
+import {fetchPatData} from "../../redux/ActionCreator";
 
-const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
+const get_user_type_id = localStorage.getItem('user_type_id');
+
+function TabulatedData(values){
+  return (
+        <Table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </Table>
+      );
+}
+
+function RenderPatientItem({data}){
+  console.log("THE ARRAY",data)
+  return (
+    <h1>It works</h1>
+  )
+}
 
 function PatHomePage(props) {
-  // render() {
-    // console.log("NEW PROPS", props);
+  console.log("PROPS PROPS IN PATHOMEPAGE",props)
+  useEffect(() => {
+    console.log("THE UseEffct ran")
+    props.fetchPatData(get_user_type_id)
+    console.log("WHEN DATA IS MOUNTED",props)
+  },[])
 
-    if (props.patient_data.isLoading) {
-      console.log("I ran");
-      return (
-        <div className="container">
-          <div className="row">
-            <h3>Loading</h3>
-            <Spin indicator={antIcon} />
-          </div>
-        </div>
-      );
-    } else {
+  console.log("PROPS PROPS IN PATHOMEPAGE right after useEffect \n \n",props)
+  if(props.patient_data.isLoading)return(<LoadingComponent/>)
+  else if(props.patient_data.pat_data !==null){
+    console.log("THE ARRAY OUTSIDE ARROW FUNC",props.patient_data.pat_data.sep_data);
+    const theArray = props.patient_data.pat_data.sep_data
+    // RenderPatientItem(theArray)
+    return(
+    <>
+      <h1>THE ARROW FUNC</h1>
+      {<RenderPatientItem data={theArray}/>}
+    </>
+    )
+  }else{
+
       return (
         <>
-          <Jumbotron>
-            <h1 className="display-3">Hello, world!</h1>
-            <p className="lead">
-              This is a simple hero unit, a simple Jumbotron-style component for
-              calling extra attention to featured content or information.
-            </p>
-            <hr className="my-2" />
-            <p>
-              It uses utility classes for typography and spacing to space
-              content out within the larger container.
-            </p>
-            <p className="lead">
-              <Button color="link">
-                <Link to={`/stats/${props.auth.token.user_type_id}`}>
-                  Check Stats
-                </Link>
-              </Button>
-            </p>
-          </Jumbotron>
+        <h1>NOTHING IS RETURNING</h1>
         </>
       );
     }
   }
-// }
+
 
 const mapStateToProps = (state) => {
   console.log("THE STATE HAS SHIT", state);
   return {
     auth: state.auth,
-    patient_data: { isLoading: false },
+    patient_data: state.pat_data,//{ isLoading: false },
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  // fetchDocData: () => dispatch(fetchDocData()),
+  fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(PatHomePage);
+
+// const theArray = this.props.doctor_data.doc_data.each_pat_json;
