@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import PatHomePage from "./pat_Components/PatHomePage";
 import HomePage from "./doc_Components/HomePage";
 
+
 const get_user_type_id = localStorage.getItem('user_type_id');
 const get_type = localStorage.getItem('user_type');
 

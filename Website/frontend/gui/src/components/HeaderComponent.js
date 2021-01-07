@@ -11,7 +11,7 @@ import {
 } from "reactstrap";
 import { connect } from "react-redux";
 import { logout } from "../redux/ActionCreator";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 const links = [
   { key: "1", href: "/home", text: "Home" },
@@ -32,6 +32,7 @@ class Header extends Component {
   }
   logoutbutton = () => {
     this.props.logout();
+    <Redirect to="/"/>
   };
 
   toggle() {
@@ -123,29 +124,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
-
-// className={className}
-// const linkFunc = () => (
-//   <>
-//   <NavItem>
-//     <NavLink href="/home" >
-//       Home
-//     </NavLink>
-//   </NavItem>
-//   <NavItem>
-//     <NavLink href="/home" >
-//       Home
-//     </NavLink>
-//   </NavItem>
-//   <NavItem>
-//     <NavLink href="/home" >
-//       Home
-//     </NavLink>
-//   </NavItem>
-//   <NavItem>
-//     <NavLink href="/home" >
-//       Home
-//     </NavLink>
-//   </NavItem>
-//   </>
-// )

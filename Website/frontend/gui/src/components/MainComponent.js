@@ -23,20 +23,23 @@ function Main(props) {
       
   return(
     <>
-    {isLoggedIn?
-      (
-        <div>
-          <Header />
-          <Switch>
-            <Route path="/home" component={Home} />
-            <Route path="/stats/:pat_id" component={Graphvisulation} />
-            <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
-            {/* If needed we can also make a table of the data of patient */}
-            <Redirect to="/home" />
-          </Switch>
-        </div>
-      )
-      :<Route path="/login" component={AuthenticationComponent} />}
+      <div>
+        <Header />
+        <Switch>
+          {isLoggedIn?
+            <>
+              <Route path="/home" component={Home} />
+              <Route path="/stats/:pat_id" component={Graphvisulation} />
+              <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
+              <Redirect to="/home" />
+            </>:
+            <>
+              <Route path="/login" component={AuthenticationComponent} />
+              <Redirect to="/login" />
+            </>
+          }
+        </Switch>
+      </div>
     </>
   )
 }
@@ -48,3 +51,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => ({});
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
+
+//{isLoggedIn?
+//:}
+//{/* If needed we can also make a table of the data of patient */}
