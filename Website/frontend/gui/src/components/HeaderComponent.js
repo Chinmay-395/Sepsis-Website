@@ -11,6 +11,7 @@ import {
 } from "reactstrap";
 import { connect } from "react-redux";
 import { logout } from "../redux/ActionCreator";
+import { Link } from "react-router-dom";
 
 const links = [
   { key: "1", href: "/home", text: "Home" },
@@ -46,7 +47,7 @@ class Header extends Component {
         return (
           <React.Fragment key={key}>
             <NavItem >
-              <NavLink href="#">{localStorage.getItem("email")}</NavLink>
+              <Link to="#" className='nav-link'>{localStorage.getItem("email")}</Link>
             </NavItem>
             <button onClick={() => this.logoutbutton()}>Logout</button>
           </React.Fragment>
@@ -59,7 +60,7 @@ class Header extends Component {
         return (
           
             <NavItem key={key}>
-              <NavLink href={new_href}>{text}</NavLink>
+              <Link to={new_href} className="nav-link">{text}</Link>
             </NavItem>
           
         );
@@ -69,7 +70,7 @@ class Header extends Component {
         return (
           
             <NavItem key={key}>
-              <NavLink href={diff_href}>{text}</NavLink>
+              <Link to={diff_href} className="nav-link">{text}</Link>
             </NavItem>
           
         );

@@ -1,11 +1,9 @@
 import React from "react";
 import { Table } from "reactstrap";
 import { connect } from "react-redux";
-import { Icon, Spin } from "antd";
 import { Link } from "react-router-dom";
 //custom imports
 import { fetchDocData } from "../../redux/ActionCreator";
-const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
 const RenderPatItem = (pat) => {
   console.log("The renderPatItem object", pat);
@@ -44,7 +42,6 @@ class HomePage extends React.Component {
         <div className="container">
           <div className="row">
             <h3>Loading</h3>
-            <Spin indicator={antIcon} />
           </div>
         </div>
       );
