@@ -1,38 +1,34 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
+// import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
 import {Line} from 'react-chartjs-2';
 
-const simpleComp =(data)=> {
+function simpleComp(data){
   console.log("THE CHART VALUES",data)
-    Object.entries(data).forEach(([k,v]) => {
+  let chart_prop =Object.entries(data).map(([k,v],index) => {
     console.log("The key: ",k)
     console.log("The value: ",v)
-    })
-
-    let chart_prop = {
-      labels: [0,20,40,60,80,100,120,140,160,180,200],
-      datasets: [
-        {
-          label: "level of thick",
-          data: data['heart_rate'],//[32,45,12,76,69],
-          backgroundColor: ["rgba(75, 192, 192, 0.6)"],
-          borderWidth: 4
-        }
-      ]
-    }
+    var chart_val = {
+        labels: [0,20,40,60,80,100,120,140,160,180,200],
+        datasets: [
+          {
+            label:k,
+            data: v,
+            backgroundColor: ["rgba(75, 192, 192, 0.6)"],
+            borderWidth: 4
+          }
+        ]
+      }
     return(
-    <div>
-      <Line data={chart_prop} options={{responsive:true}} />
-    </div>
+      <div key={index} >
+        {/* style={{ position:"relative", width:500, height:300, alignContent:"center" }} */}
+        <Line data={chart_val} options={{responsive:true}} />
+      </div>
+      
     )
-  
-  
-  // ,width:"500px"
-  //style={{height:"500px"}}
-  // return(
-  //  <>{each_sepsis_prop}</> 
-  // )
+  })
+  console.log("THIS IS",chart_prop)
+  return chart_prop
 }
 //create a useEffect that will fetch all the values on refresh
 function Graphvisulation(props) {
