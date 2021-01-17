@@ -2,10 +2,10 @@
 
 1) What is the project about
 2) [How to configure](https://github.com/Chinmay-395/Sepsis-Website/wiki)
-a) Locally
-b) On Docker
-    1. Without Dockerfile
-    2. With Dockerfile
+    a) Locally
+    b) On Docker
+        1. Without Dockerfile
+        2. With Dockerfile
 
 # How to configure
 
