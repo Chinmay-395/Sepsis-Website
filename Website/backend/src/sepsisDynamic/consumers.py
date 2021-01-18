@@ -98,9 +98,9 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
                 print("DOCTOR GROUP NAME --------->", self.doc_pat_grp_id)
             elif user.is_superuser:
                 """I will keep the grp_id constant in this case
-                shikamaru's the patient and his grp_id = "2281980b-dd5a-4f27-9e66-83b7fcc9dc99"
+                shikamaru's the patient and his grp_id = "ed63d330-9b7d-403e-8942-cb6374df4bd1"
                 """
-                grp_id = "2281980b-dd5a-4f27-9e66-83b7fcc9dc99"
+                grp_id = "ed63d330-9b7d-403e-8942-cb6374df4bd1"
                 await self.channel_layer.group_add(
                     group=f"{grp_id}",
                     channel=self.channel_name
@@ -118,7 +118,7 @@ class SepsisDynamicConsumer(AsyncJsonWebsocketConsumer):
     # the below code is important
     async def broadcast_start_sepsis_data(self, data):
         """This broadcast function will only be allowed to the superuser(ie Hospital)"""
-        grp_id = "2281980b-dd5a-4f27-9e66-83b7fcc9dc99"
+        grp_id = "ed63d330-9b7d-403e-8942-cb6374df4bd1"
         await self.serializer_checking_saving_data(data)
         await self.channel_layer.group_send(
             group=grp_id,

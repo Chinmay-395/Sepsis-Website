@@ -68,6 +68,14 @@ class UserLoginApiView(ObtainAuthToken):
             and if the user is a patient then i will send pat-id
             as user_type_id 
         """
+        token, created = Token.objects.get_or_create(user=user)
+        if user.is_superuser:
+            return Response({
+                'token': token.key,
+                'user_id': user.pk,
+                'email': user.email,
+                'name': user.name,
+            })
         if user.user_type == 'DOCTOR':
             x = models.UserProfile.objects.get(id=user.id)
             userprofile_id = x.id
@@ -83,7 +91,7 @@ class UserLoginApiView(ObtainAuthToken):
             user_type_id = y[0]['id']
             print("THE USER-ID of PATIENT", userprofile_id)
             print("USER's pat-id", user_type_id)
-        token, created = Token.objects.get_or_create(user=user)
+
         return Response({
             'token': token.key,
             'user_id': user.pk,
