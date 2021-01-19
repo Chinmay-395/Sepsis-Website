@@ -1,10 +1,13 @@
-// import React,{useState,useEffect} from 'react'
+import { share } from 'rxjs/operators'; // new
+import { webSocket } from 'rxjs/webSocket'; // new
 
-// function socketConnection() {
-//   const [socket,setSocket] = useState(null)
-//   useEffect(() => {
+let _socket; // new
+export let messages; 
 
-//   })  
-// }
-
-// export default socketConnection
+export const connect_ws = () => {
+  if (!_socket || _socket.closed) {
+    _socket = webSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
+    messages = _socket.pipe(share());
+    // messages.subscribe(message => console.log(message));
+  }
+};

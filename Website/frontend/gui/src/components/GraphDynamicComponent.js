@@ -1,12 +1,8 @@
 import React,{useEffect,useState} from "react";
 import { connect } from "react-redux";
-/** We don't need the below import; this component will run through RxJs*/
-// import { fetchPatData } from "../redux/ActionCreator";
 import {Bar} from 'react-chartjs-2';
-
-
-
-// const patient_data = {"heart_rate":56, "oxy_saturation":98, "temperature":75,"blood_pressure":15,"resp_rate":21,"mean_art_pre":35}
+import {connect_ws, messages} from "../hooks/socketConnection"
+//**************************These attribute functions for graphs **************************/
 const genData = (patient_data) => {
   if(patient_data!==undefined){
     // console.log("THE DATA in genData",patient_data)
@@ -87,38 +83,34 @@ const options = {
   },
 }
 //***************************************************This is related to socket connection ****************************************************/
-let socket; 
-export const connectSocket = () => {
-  console.log("I RAN IN connectSocket func")
-  if (!socket || socket.closed) {
-    console.log("I ONLY RUN ONCE")
-    socket = new WebSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
-  }
-};
+// let socket; 
+// export const connectSocket = () => {
+//   console.log("I RAN IN connectSocket func")
+//   if (!socket || socket.closed) {
+//     console.log("I ONLY RUN ONCE")
+//     socket = new WebSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
+//   }
+// };
 //***************************************************end of This is related to socket connection ****************************************************/
 // let socket = new WebSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
 function GraphDynamicComponent(props) {
-  connectSocket()
+  // connectSocket()
   console.log("GRAPH",props)
   const [sepsis_data, setSepsis_data] = useState(genData())
   
   
   useEffect(()=>{
-      
-      const interval = setInterval(() => {
-        
-        socket.onmessage = function(event) {
-        console.log(`[message] Data received from server: ${event.data}`);
-        
-        setSepsis_data(genData(JSON.parse(event.data)))
-        console.log("THE USE EFFECR")
-        };
-    }, 5000)
+    console.log("THE USE-EFFECT HOOK RAN")
+    connect_ws()
 
+    const subscription = messages.subscribe((message)=>{
+      console.log("MESSAGE \n",message)
+      setSepsis_data(genData(message))
+    })
     return () => {
-      console.log("THE CLEARERNCE")
-      clearInterval(interval)
-      setSepsis_data(null)
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     }
 
   },[]);
