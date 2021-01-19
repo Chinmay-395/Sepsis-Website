@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import Home from "./HomeComponent";
@@ -9,7 +9,7 @@ import GraphDynamicComponent from "./GraphDynamicComponent"
 
 
 function Main(props) {
-  // console.log("THE PROPS",props)
+  console.log("THE PROPS",props)
   const checkLogin = ()=>{
     if(localStorage.getItem("token") !== null && props.auth.token.token === localStorage.getItem("token")){
       // const get_user_type_id = localStorage.getItem('user_type_id');
@@ -18,9 +18,16 @@ function Main(props) {
     }
     else return false
   }
-  const [isLoggedIn,setLoggedIn] = useState(checkLogin())
+  const [isLoggedIn,setLoggedIn] = useState(false)
   
-      
+  useEffect(()=>{
+    console.log("CHECK the loginFunction \n",checkLogin())
+    setLoggedIn(checkLogin())
+  },[props.auth.token])
+
+  console.log("THE IS LOGGED IN state \n",isLoggedIn)
+
+  
   return(
     <>
       <div>

@@ -16,7 +16,11 @@ const get_type = localStorage.getItem('user_type');
 const Home =(props)=> {
   console.log("THE PROPS",props)
   console.log(props)
-  
+  const PatOrDocHomePage = ()=>{
+    if(get_type === 'PATIENT')return<PatHomePage/>
+    else if(get_type === 'DOCTOR')return<HomePage/>
+    else return <></>
+  }
 
   
   return(
@@ -40,8 +44,7 @@ const Home =(props)=> {
           </Button>
         </p>
       </Jumbotron>
-      {get_user_type_id!==null && get_type==="PATIENT"?(<PatHomePage/>):<></>}
-      {get_user_type_id!==null && get_type==="DOCTOR"?(<HomePage/>):<></>}
+      {PatOrDocHomePage()}
       {/* JSON.stringify */}
       {console.log("THE PROPS IN PATIENT",props)}
       

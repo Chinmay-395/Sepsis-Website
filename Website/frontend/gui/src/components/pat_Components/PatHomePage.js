@@ -46,7 +46,7 @@ function RenderPatientItem({data}){
 }
 
 function PatHomePage(props) {
-
+  console.log("PRops in pat", props)
   useEffect(() => {
     props.fetchPatData(get_user_type_id)
   },[])

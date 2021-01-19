@@ -1,11 +1,8 @@
 import React,{useEffect,useState} from "react";
 import { connect } from "react-redux";
-import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
-import { webSocket } from 'rxjs/webSocket';
-import { share } from 'rxjs/operators';
 /** We don't need the below import; this component will run through RxJs*/
 // import { fetchPatData } from "../redux/ActionCreator";
-import {Bar, Line} from 'react-chartjs-2';
+import {Bar} from 'react-chartjs-2';
 
 
 
@@ -90,23 +87,18 @@ const options = {
   },
 }
 //***************************************************This is related to socket connection ****************************************************/
-// let _socket; 
-// export let messages; 
-
-// export const connectSocket = () => {
-//   console.log("I RAN IN connectSocket func")
-//   if (!_socket || _socket.closed) {
-//     console.log("I ONLY RUN ONCE")
-//     const token = localStorage.getItem('token');
-//     _socket = webSocket(`ws://localhost:8000/sepsisDynamic/?token=${token}`);
-//     messages = _socket.pipe(share());
-//     messages.subscribe(message => console.log(message));
-//   }
-// };
+let socket; 
+export const connectSocket = () => {
+  console.log("I RAN IN connectSocket func")
+  if (!socket || socket.closed) {
+    console.log("I ONLY RUN ONCE")
+    socket = new WebSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
+  }
+};
 //***************************************************end of This is related to socket connection ****************************************************/
-let socket = new WebSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
+// let socket = new WebSocket(`ws://localhost:8000/sepsisDynamic/?token=${localStorage.getItem('token')}`);
 function GraphDynamicComponent(props) {
-  // connectSocket()
+  connectSocket()
   console.log("GRAPH",props)
   const [sepsis_data, setSepsis_data] = useState(genData())
   
@@ -123,7 +115,12 @@ function GraphDynamicComponent(props) {
         };
     }, 5000)
 
-    return () => clearInterval(interval)
+    return () => {
+      console.log("THE CLEARERNCE")
+      clearInterval(interval)
+      setSepsis_data(null)
+    }
+
   },[]);
 
   return (
