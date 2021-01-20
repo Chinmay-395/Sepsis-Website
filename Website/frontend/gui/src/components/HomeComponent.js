@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 // import { Redirect, Link } from 'react-router-dom'
 // import { Link, withRouter } from 'react-router'
 import { Jumbotron, Button } from "reactstrap";
@@ -9,19 +9,31 @@ import PatHomePage from "./pat_Components/PatHomePage";
 import HomePage from "./doc_Components/HomePage";
 
 
-const get_user_type_id = localStorage.getItem('user_type_id');
-const get_type = localStorage.getItem('user_type');
+
+
 
 
 const Home =(props)=> {
   console.log("THE PROPS",props)
-  console.log(props)
+  const get_user_type_id = localStorage.getItem('user_type_id');
+  const get_type = localStorage.getItem('user_type');
+  // const [user_id,setUser_id] = useState(null)
+  // useEffect(()=>{
+  //   if(props.auth.token.user_type_id === get_user_type_id){
+
+  //   }
+  // },[props.auth.token.user_type_id])
   const PatOrDocHomePage = ()=>{
-    if(get_type === 'PATIENT')return<PatHomePage/>
+    console.log("THE FNUCTION GOT.....",get_type,get_user_type_id)
+    if(get_type === 'PATIENT'){
+      console.log("THE PAT GOT CAUGHT")
+      return<PatHomePage/>
+    }
     else if(get_type === 'DOCTOR')return<HomePage/>
     else return <></>
-  }
+  }  
 
+  
   
   return(
     <>

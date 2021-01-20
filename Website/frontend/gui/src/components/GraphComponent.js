@@ -74,9 +74,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Graphvisulation);
 
-{/* <Card className="mb-3">
-        <CardBody >
-          <CardTitle>Card-12</CardTitle>
-          <Line data={chart_prop} options={{responsive:true}} />
-        </CardBody>
-      </Card> */}

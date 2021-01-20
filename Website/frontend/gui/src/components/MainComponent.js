@@ -6,8 +6,9 @@ import AuthenticationComponent from "./AuthenticationComponent";
 import Graphvisulation from "./GraphComponent";
 import Header from "./HeaderComponent";
 import GraphDynamicComponent from "./GraphDynamicComponent"
+import {connect_ws,messages } from "../hooks/socketConnection"
 
-
+let subscription
 function Main(props) {
   console.log("THE PROPS",props)
   const [isLoggedIn,setLoggedIn] = useState(false)
@@ -23,7 +24,18 @@ function Main(props) {
     )
   },[props.auth.token])
 
-  console.log("THE IS LOGGED IN state \n",isLoggedIn)
+  
+  function dataNotificationSubscription(){
+    subscription = messages.subscribe((message)=>{
+      console.log("MESSAGE of data", message)
+    })  
+  }
+  
+  function discontinueSubscription(){
+    if(subscription){
+      subscription.unsubscribe()
+    }
+  }
 
   
   return(
@@ -37,8 +49,11 @@ function Main(props) {
               <Route path="/stats/:pat_id" component={Graphvisulation} />
               <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
               <Redirect to="/home" />
+              {connect_ws() }
+              {dataNotificationSubscription()}
             </>:
             <>
+              {discontinueSubscription()}
               <Route path="/login" component={AuthenticationComponent} />
               <Redirect to="/login" />
             </>
@@ -56,7 +71,3 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => ({});
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
-
-//{isLoggedIn?
-//:}
-//{/* If needed we can also make a table of the data of patient */}
