@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import {fetchPatData} from "../../redux/ActionCreator";
 import RenderPatientItem from "../pat_Components/PatHomePage"
+import Graphvisulation from "../GraphComponent"
 /**[Patient's Details page]
  * This component is an details page of the patient
  * the patient list page is on the home-page for doctor
@@ -39,7 +40,7 @@ function PatientsOfDocComponent(props) {
           {props.patient_of_doc_data && <RenderPatientItem data={props.patient_of_doc_data.pat_data.sep_data}/>}
         </>:
         <>
-          GRAPHS
+          {props.patient_of_doc_data && <Graphvisulation/>}
         </>
         }
       </>

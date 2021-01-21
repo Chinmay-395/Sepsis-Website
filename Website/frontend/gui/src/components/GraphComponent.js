@@ -36,6 +36,7 @@ function Graphvisulation(props) {
   console.log("THE ID of patient",pat_id)
   console.log("PROPS in GRAPH Component",props)
   var chart_data = props.pat_data.pat_data.sep_data
+  chart_data = chart_data.reverse()
   /**[Note]
    Since the data coming in this component is through props
    which has alread reversed data inside it, from the home_component;
@@ -58,6 +59,7 @@ function Graphvisulation(props) {
       }
     setGraph(()=>{
       console.log("I RAN in setGraphs")
+      
       for(var i=0; i<10;i++){
         obj_data["heart_rate"].push(chart_data[i]['heart_rate'])
         obj_data['oxy_saturation'].push(chart_data[i]['oxy_saturation'])

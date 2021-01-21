@@ -9,8 +9,6 @@ import {fetchPatData} from "../../redux/ActionCreator";
 
 export function RenderPatientItem({data}){
   if(data!=null || data!==undefined){
-    const rev_array = data
-    // console.log("THE REVERSE VALUE THAT SHOULD BE COMPARED \n \n",rev_array.reverse().slice(0,5))
     const returnThis = data.reverse().slice(0,10).map((obj,index)=> {
       return(
         <tbody key={index}>
