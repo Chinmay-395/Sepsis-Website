@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React from "react";
 // import { Redirect, Link } from 'react-router-dom'
 // import { Link, withRouter } from 'react-router'
 import { Jumbotron, Button } from "reactstrap";

@@ -6,12 +6,10 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
-  // NavbarText,
 } from "reactstrap";
 import { connect } from "react-redux";
 import { logout } from "../redux/ActionCreator";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 function Header(props){
@@ -39,9 +37,6 @@ function Header(props){
         <button onClick={logoutbutton}>Logout</button>
       </>
       );
-  }
-  if(props.auth.token==null){
-    return(<Redirect to="/"/>)
   }
   return (
     <div>
