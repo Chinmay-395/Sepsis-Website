@@ -25,12 +25,16 @@ function Header(props){
   const NavBarWhenLoggedIn = () => {
     return (
       <>
-        <NavItem>
-          <Link to={`/stats/${localStorage.getItem("user_type_id")}`} className="nav-link">stats</Link>
-        </NavItem>
-        <NavItem>
-          <Link to={`/monitor/${localStorage.getItem("user_type_id")}`} className="nav-link">Monitoring</Link>
-        </NavItem>
+        {localStorage.getItem('user_type')==="PATIENT" &&
+        <>
+          <NavItem>
+            <Link to={`/stats/${localStorage.getItem("user_type_id")}`} className="nav-link">stats</Link>
+          </NavItem>
+          <NavItem>
+            <Link to={`/monitor/${localStorage.getItem("user_type_id")}`} className="nav-link">Monitoring</Link>
+          </NavItem>
+        </>
+        }
         <NavItem >
           <Link to="#" className='nav-link'>{localStorage.getItem("email")}</Link>
         </NavItem>
