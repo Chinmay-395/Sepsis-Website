@@ -20,6 +20,11 @@ function FetchPatsOfDoc({data}){
               {obj.patient_name}
             </Link>
           </td>
+          <td>
+            <Link to={`/monitor/${obj.patient_id}`}>
+              Monitor
+            </Link>
+          </td>
           <td>Stats need to be added</td>
         </tr>
       );
@@ -32,7 +37,8 @@ function FetchPatsOfDoc({data}){
                 <th>#</th> 
                 <th>ID</th> 
                 <th>Name</th> 
-                <th>Status</th> 
+                <th>Check Stats</th> 
+                <th>Sepsis Status</th> 
               </tr> 
             </thead> 
             <tbody>

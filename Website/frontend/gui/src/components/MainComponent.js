@@ -50,17 +50,16 @@ function Main(props) {
           {isLoggedIn && props.auth.token!==null?
             <>
               <Route path="/home" component={Home} />
+
               {props.auth.token.user_type === "PATIENT"?
                 <>
                   <Route path="/stats/:pat_id" component={Graphvisulation} />
-                  <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
                 </>:
                 <>
                   <Route path="/patient/:pat_id" component={PatientsOfDocComponent} />
                 </>
               }
-              
-              
+              <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
               <Redirect to="/home" />
               {connect_ws() }
               {dataNotificationSubscription()}
