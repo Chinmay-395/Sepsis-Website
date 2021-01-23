@@ -31,7 +31,7 @@ function Main(props) {
   console.log("THE PROPS I AM LOOKING FOR AFTER LOG-OUT",isLoggedIn)
   function dataNotificationSubscription(){
     subscription = messages.subscribe((message)=>{
-      console.log("MESSAGE of data", message)
+      // console.log("MESSAGE of data", message)
     })  
   }
   

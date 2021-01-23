@@ -25,7 +25,8 @@ function FetchPatsOfDoc({data}){
               Monitor
             </Link>
           </td>
-          <td>Stats need to be added</td>
+          <td>{obj.patient_status}</td>
+          <td>{obj.patient_grp_id}</td>
         </tr>
       );
     })
@@ -39,6 +40,7 @@ function FetchPatsOfDoc({data}){
                 <th>Name</th> 
                 <th>Check Stats</th> 
                 <th>Sepsis Status</th> 
+                <th>Grp_id of Patient</th>
               </tr> 
             </thead> 
             <tbody>

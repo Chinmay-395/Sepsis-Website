@@ -104,7 +104,7 @@ function GraphDynamicComponent(props) {
     connect_ws()
 
     const subscription = messages.subscribe((message)=>{
-      console.log("MESSAGE \n",message)
+      console.log("MESSAGE in graph \n",message)
       setSepsis_data(genData(message))
     })
     return () => {
