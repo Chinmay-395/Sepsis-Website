@@ -1,4 +1,4 @@
-# Index
+# Index new
 
 1. [What is the project about](https://github.com/Chinmay-395/Sepsis-Website/wiki)
 2. How to configure
