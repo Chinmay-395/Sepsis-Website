@@ -91,15 +91,16 @@ class DoctorSerializer(ModelSerializer):
         for patient in obj.patient_set.all():
             pat_id = patient.id
             pat_name = patient.pat.name
-            data = json.dumps({'patient_id': pat_id, 'patient_name': pat_name})
-            print("TJE DATA", data)
-            # data_list.append(data)
+            print("++++++++++++++++++++++++++++++++++++++++++", patient.grp_id)
+            data = json.dumps({
+                'patient_id': pat_id,
+                'patient_name': pat_name,
+                'patient_grp_id': str(patient.grp_id),
+                'patient_status': patient.status
+            })
             x = ast.literal_eval(data)
             data_list.append(x)
-            print(x)
-            # new_list += x
-            # data_list = json.loads(data)
-        print("THE DATA I want ++++++++++>", data_list)
+        print("Each DATA Item ++++++++++>", data_list)
         # print("THE DATA I want ++++++++++>", new_list)
         return data_list
 

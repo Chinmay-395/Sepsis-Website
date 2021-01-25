@@ -1,72 +1,82 @@
-import React, { Component } from "react";
+import React, { useState,useEffect } from "react";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import Home from "./HomeComponent";
 import AuthenticationComponent from "./AuthenticationComponent";
 import Graphvisulation from "./GraphComponent";
 import Header from "./HeaderComponent";
+import GraphDynamicComponent from "./GraphDynamicComponent"
+import {connect_ws,messages } from "../hooks/socketConnection"
+import PatientsOfDocComponent from "./doc_Components/PatientsOfDocComponent";
 
-class Main extends Component {
-  componentDidMount() {
-    console.log("componentDidMount ran inside Main ");
 
-    if (this.props.auth.token == null) {
-      console.log("You lost your props JACK");
-    } else {
-      console.log(">>>>", this.props);
-    }
-  }
-  componentDidUpdate() {
-    console.log("componentUdate>>>>", this.props);
-    console.log("----", this.props.location);
-  }
-
-  PatWithId = ({ match }) => {
-    console.log("THE MATCH", match);
-    console.log(typeof match.params.pat_id);
-    console.log(this.props);
-    if (this.props.auth.token !== null) {
-      console.log("The auth props", this.props.auth);
-      if (this.props.auth.token.token === localStorage.getItem("token")) {
-        if (
-          this.props.auth.token.user_type_id ===
-            parseInt(match.params.pat_id) &&
-          this.props.auth.token.user_type === "PATIENT"
-        ) {
-          return <Graphvisulation patientId={match.params.pat_id} />;
-        } else if (this.props.auth.token.user_type === "DOCTOR") {
-          return <Graphvisulation patientId={match.params.pat_id} />;
-        } else {
-          return (
-            <div>
-              <h2>You are not allowed here</h2>
-            </div>
-          );
-        }
-      } else {
-        // This is where the user must not come
-        return <h2>You are authenticated but not suppose be here</h2>;
+let subscription
+function Main(props) {
+  console.log("THE PROPS",props)
+  console.log("THE LOCALSTORAGE", localStorage.getItem("token"))
+  const [isLoggedIn,setLoggedIn] = useState(()=>{return window.localStorage.getItem('token') !== null})
+  useEffect(()=>{
+    console.log("THE USE-EFFCT RAN")
+    setLoggedIn(()=>{
+      console.log("THE SETLOGGIN RAN")
+      if(localStorage.getItem("token") !== null && 
+        props.auth.token.token === localStorage.getItem("token")){
+        return true
       }
-    } else {
-      return <h2>+++++You are not authenticated</h2>;
-    }
-  };
+      else return false
+      }
+    )
+  },[props.auth.token])
 
-  render() {
-    return (
-      <div>
-        <Header />
-        <Switch>
-          <Route path="/home" component={() => <Home />} />
-          <Route path="/login" component={() => <AuthenticationComponent />} />
-          <Route path="/stats/:pat_id" component={this.PatWithId} />
-          <Redirect to="/home" />
-        </Switch>
-        {/* Footer component */}
-      </div>
-    );
+  console.log("THE PROPS I AM LOOKING FOR AFTER LOG-OUT",isLoggedIn)
+  function dataNotificationSubscription(){
+    subscription = messages.subscribe((message)=>{
+      // console.log("MESSAGE of data", message)
+    })  
   }
+  
+  function discontinueSubscription(){
+    if(subscription){
+      subscription.unsubscribe()
+    }
+  }
+
+  
+  return(
+    <>
+      <div>
+        <Header logInProp={isLoggedIn} />
+        <Switch>
+          {isLoggedIn && props.auth.token!==null?
+            <>
+              <Route path="/home" component={Home} />
+
+              {props.auth.token.user_type === "PATIENT"?
+                <>
+                  <Route path="/stats/:pat_id" component={Graphvisulation} />
+                </>:
+                <>
+                  <Route path="/patient/:pat_id" component={PatientsOfDocComponent} />
+                </>
+              }
+              <Route path="/monitor/:pat_id" component={GraphDynamicComponent} />
+              <Redirect to="/home" />
+              {connect_ws() }
+              {dataNotificationSubscription()}
+            </>:
+            <>
+              {console.log("LOGGED OUT AND IN RUNNING COMPONNET")}
+              {discontinueSubscription()}
+              <Route path="/login" component={AuthenticationComponent} />
+              <Redirect to="/login" />
+            </>
+          }
+        </Switch>
+      </div>
+    </>
+  )
 }
+
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,

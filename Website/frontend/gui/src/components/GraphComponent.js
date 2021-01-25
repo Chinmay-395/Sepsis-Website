@@ -1,77 +1,86 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
-import { fetchPatData } from "../redux/ActionCreator";
+// import { Container, Row, /*Col,*/ Card, CardBody, CardTitle } from "reactstrap";
+import {Line} from 'react-chartjs-2';
+import { useParams } from "react-router-dom";
+import LoadingComponent from "./LoadingComponent";
 
-class Graphvisulation extends React.Component {
-  //I want to remove any sort of authentication inside this component
-  //All the authentication stuff should be done prior
-  //This component will also be used for Monitoring in real-time
-  //__________ |Remove the authentication on this page ASAP| __________
-  componentDidMount() {
-    console.log("----", this.props);
-    console.log(
-      "user-type in props",
-      typeof this.props.auth.token.user_type_id
-    );
-    console.log(
-      "user-type in local",
-      typeof localStorage.getItem("user_type_id")
-    );
-    this.props.fetchPatData(parseInt(this.props.patientId));
-  }
-  componentDidUpdate() {
-    console.log(this.props.pat_data);
-  }
-  render() {
-    return (
-      <div style={{ padding: "15px" }}>
-        <Container fluid>
-          <Row>
-            <div className="col-md-12 col-lg-6">
-              <Card className="mb-3">
-                <CardBody>
-                  <CardTitle>Card-1</CardTitle>
-                </CardBody>
-              </Card>
-            </div>
-            <div className="col-md-12 col-lg-6">
-              <Row>
-                <div className="col-md-6">
-                  <Card className="mb-3">
-                    <CardBody>
-                      <CardTitle>Card-1</CardTitle>
-                    </CardBody>
-                  </Card>
-                </div>
-                <div className="col-md-6">
-                  <Card className="mb-3">
-                    <CardBody>
-                      <CardTitle>Card-1</CardTitle>
-                    </CardBody>
-                  </Card>
-                </div>
-                <div className="col-md-6">
-                  <Card className="mb-3">
-                    <CardBody>
-                      <CardTitle>Card-1</CardTitle>
-                    </CardBody>
-                  </Card>
-                </div>
-                <div className="col-md-6">
-                  <Card className="mb-3">
-                    <CardBody>
-                      <CardTitle>Card-1</CardTitle>
-                    </CardBody>
-                  </Card>
-                </div>
-              </Row>
-            </div>
-          </Row>
-        </Container>
+function simpleComp(data){
+  let chart_prop =Object.entries(data).map(([k,v],index) => {
+    var chart_val = {
+        labels: [0,20,40,60,80,100,120,140,160,180,200],
+        datasets: [
+          {
+            label:k,
+            data: v,
+            backgroundColor: ["rgba(75, 192, 192, 0.6)"],
+            borderWidth: 4
+          }
+        ]
+      }
+    return(
+      <div key={index} >
+        {/* style={{ position:"relative", width:500, height:300, alignContent:"center" }} */}
+        <Line data={chart_val} options={{responsive:true}} />
       </div>
-    );
-  }
+      
+    )
+  })
+  return chart_prop
+}
+
+
+//create a useEffect that will fetch all the values on refresh
+function Graphvisulation(props) {
+  let { pat_id } = useParams();
+  console.log("THE ID of patient",pat_id)
+  console.log("PROPS in GRAPH Component",props)
+  var chart_data = props.pat_data.pat_data.sep_data
+  chart_data = chart_data.reverse()
+  /**[Note]
+   Since the data coming in this component is through props
+   which has alread reversed data inside it, from the home_component;
+   so no need to reverse it again.
+   */
+  const [graph, setGraph] = useState(null)
+  const [loading,setLoading] = useState(true)
+
+  
+  
+  useEffect(()=>{
+    console.log("I RAN in useEFFCET")
+    let obj_data = {
+        "heart_rate":[],
+        "oxy_saturation":[],
+        "temperature":[],
+        "blood_pressure":[],
+        "mean_art_pre":[],
+        "resp_rate":[]
+      }
+    setGraph(()=>{
+      console.log("I RAN in setGraphs")
+      
+      for(var i=0; i<10;i++){
+        obj_data["heart_rate"].push(chart_data[i]['heart_rate'])
+        obj_data['oxy_saturation'].push(chart_data[i]['oxy_saturation'])
+        obj_data['temperature'].push(chart_data[i]['temperature'])
+        obj_data['blood_pressure'].push(chart_data[i]['blood_pressure'])
+        obj_data['mean_art_pre'].push(chart_data[i]['mean_art_pre'])
+        obj_data['resp_rate'].push(chart_data[i]['resp_rate'])
+      }
+      return obj_data
+    })
+    setLoading(false)
+    
+    return ()=>{}
+  },[chart_data])
+  
+  
+  
+  console.log("THE graph VAls of local-state are",graph)
+  return(
+    <>{loading?<LoadingComponent/>:simpleComp(graph)}</>
+  )
 }
 const mapStateToProps = (state) => {
   // console.log("THE STATE HAS ", state);
@@ -81,6 +90,6 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Graphvisulation);
+

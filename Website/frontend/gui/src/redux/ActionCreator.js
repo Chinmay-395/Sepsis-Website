@@ -157,6 +157,7 @@ export const doc_dataFailed = (errMess) => {
 
 //Fetching the Patient's Data regarding sepsis
 export const fetchPatData = (pat_id) => (dispatch) => {
+  console.log("I RAN in fetchPatData",pat_id)
   const id = pat_id; //localStorage.getItem("user_type_id"); // Doctor-Model-id
   dispatch(pat_dataLoading());
   let getPatData = async () => {

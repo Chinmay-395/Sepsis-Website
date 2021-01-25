@@ -43,7 +43,7 @@ async def receive_data_from_start_sepsis():
     #     'ws://localhost:8000/sepsisDynamic/?token=da84a99ccd35761fa91a9a027521cfb5a911e094')
     ws_pat = websocket.WebSocket()
     ws_pat.connect(
-        'ws://localhost:8000/sepsisDynamic/?token=1fe10f828b00e170b3a9c5d41fc168a31facefc3')
+        'ws://localhost:8000/sepsisDynamic/?token=c83ab7c31314d2bb9a65029f93530aef34ec2a14')
     # time.sleep(3)
     # ws_doc = websocket.WebSocket()
     # ws_doc.connect(

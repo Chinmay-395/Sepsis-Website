@@ -1,63 +1,85 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { connect } from "react-redux";
-import { Icon, Spin } from "antd";
-import { Link } from "react-router-dom";
-import { Jumbotron, Button } from "reactstrap";
-//custom imports
-// import { fetchDocData } from "../../redux/ActionCreator";
+//reactStrap
+import { Table } from "reactstrap";
+//components import
+import LoadingComponent from "../LoadingComponent"
+//redux imports
+import {fetchPatData} from "../../redux/ActionCreator";
 
-const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
+export function RenderPatientItem({data}){
+  if(data!=null || data!==undefined){
+    const returnThis = data.reverse().slice(0,10).map((obj,index)=> {
+      return(
+        <tbody key={index}>
+          <tr>
+            <td>{index+1}</td>
+            <td>{obj.heart_rate}</td>
+            <td>{obj.oxy_saturation}</td>
+            <td>{obj.temperature}</td>
+            <td>{obj.blood_pressure}</td>
+            <td>{obj.mean_art_pre}</td>
+            <td>{obj.resp_rate}</td>
+          </tr>
+        </tbody>
+      )
+    });
+    return (
+      <Table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Heart Rate</th>
+            <th>Oxy Saturation</th>
+            <th>temperature</th>
+            <th>blood Pressure</th>
+            <th>Mean Artial Pressure</th>
+            <th>Respiratory Rate</th>
+          </tr>
+        </thead>
+        {returnThis}
+      </Table>
+    )
+  }
+  else {return(<></>)}
+}
 
-class PatHomePage extends React.Component {
-  render() {
-    // console.log("NEW PROPS", this.props);
+function PatHomePage(props) {
+  /**Home-page and patient-detail-page */
+  console.log("PRops in pat", props)
+  /**The following useEffect will only when the patient's auth token & pat_id is changed */
+  useEffect(() => {
+    props.fetchPatData(props.auth.token.user_type_id)
+  },[props.auth.token.user_type_id])
 
-    if (this.props.patient_data.isLoading) {
-      console.log("I ran");
-      return (
-        <div className="container">
-          <div className="row">
-            <h3>Loading</h3>
-            <Spin indicator={antIcon} />
-          </div>
-        </div>
-      );
-    } else {
+  if (props.patient_data.isLoading)return(<LoadingComponent/>)
+  else if(props.patient_data.pat_data !==null && props.patient_data.pat_data.sep_data){
+    const theArray = props.patient_data.pat_data.sep_data
+    return(
+    <>
+      <h2>The Latest value of sepsis</h2>
+      {<RenderPatientItem data={theArray}/>}
+    </>
+    )
+  }else{
+
       return (
         <>
-          <Jumbotron>
-            <h1 className="display-3">Hello, world!</h1>
-            <p className="lead">
-              This is a simple hero unit, a simple Jumbotron-style component for
-              calling extra attention to featured content or information.
-            </p>
-            <hr className="my-2" />
-            <p>
-              It uses utility classes for typography and spacing to space
-              content out within the larger container.
-            </p>
-            <p className="lead">
-              <Button color="link">
-                <Link to={`/stats/${this.props.auth.token.user_type_id}`}>
-                  Check Stats
-                </Link>
-              </Button>
-            </p>
-          </Jumbotron>
+        <h1>NOTHING IS RETURNING</h1>
         </>
       );
     }
   }
-}
+
 
 const mapStateToProps = (state) => {
   console.log("THE STATE HAS SHIT", state);
   return {
     auth: state.auth,
-    patient_data: { isLoading: false },
+    patient_data: state.pat_data,
   };
 };
 const mapDispatchToProps = (dispatch) => ({
-  // fetchDocData: () => dispatch(fetchDocData()),
+  fetchPatData: (pat_id) => dispatch(fetchPatData(pat_id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(PatHomePage);
